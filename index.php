@@ -22,9 +22,9 @@ if(isset($_SESSION['mode'])){
 <?php
 $conn = new mysqli("localhost", "user", "user", "CSCI4140");
 if(isset($_SESSION['mode'])){
-    $q = 'SELECT COUNT(*) FROM image ORDER BY time DESC';
+    $q = 'SELECT COUNT(*) FROM image WHERE temp=0 ORDER BY time DESC';
 }else{
-    $q = 'SELECT COUNT(*) FROM image WHERE access=\'public\' ORDER BY time DESC';
+    $q = 'SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\' ORDER BY time DESC';
 }
 $sql = $conn->query($q);
 if($sql->num_rows > 0){
@@ -41,7 +41,7 @@ if (isset($_GET['current']) && is_numeric($_GET['current'])) {
 if ($currentpage > $totalpages) {$currentpage = $totalpages;}
 if ($currentpage < 1) {$currentpage = 1;}
 
-$sql = "SELECT name FROM image ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
+$sql = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
 $result = $conn->query($sql);
 
 if($result->num_rows > 0){
