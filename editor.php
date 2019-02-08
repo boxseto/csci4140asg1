@@ -43,15 +43,16 @@ if(isset($_FILES['image'])){
 
 }
 if(isset($_REQUEST['effect'])){
-    setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
     $imagick = new \Imagick(realpath($_COOKIE['filename']));
 
     if($_COOKIE['effect'] == 'border'){
+        setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'border', NULL, NULL, NULL, NULL, TRUE);
         $imagick->borderImage('black', 10, 10);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'lomo'){
+        setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'lomo', NULL, NULL, NULL, NULL, TRUE);
         $imagick->gammaImage(0.5);
         $imagick->modulateImage(100, 70, 100);
@@ -60,6 +61,7 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'lf'){
+        setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'lf', NULL, NULL, NULL, NULL, TRUE);
         $imagick2 = new \Imagick();
         $imagick2->readImage(realpath("img/protected/flare.png"));
@@ -80,11 +82,13 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick2->getImageBlob();
     }else if($_COOKIE['effect'] == 'bw'){
+        setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'bw', NULL, NULL, NULL, NULL, TRUE);
         $imagick->modulateImage(100, 0, 100);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'blur'){
+        setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'blur', NULL, NULL, NULL, NULL, TRUE);
         $imagick->blurImage(100, 2);
         header("Content-Type: imag/jpg");
@@ -137,7 +141,7 @@ if(isset($_REQUEST['config'])){
         }
         $imagick->writeImage(realpath($_COOKIE['filename']));
         rename("img/temp/"$_COOKIE['filename'], "img/upload/".$_COOKIE['filename']);
-        header('Location: index.php');
+        header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
         $conn = new mysqli("localhost", "user", "user", "CSCI4140");
         $q = "DELETE FROM image WHERE name=\"" . $_COOKIE['filename'] . "\"";

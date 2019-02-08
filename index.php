@@ -16,11 +16,19 @@ if(isset($_SESSION['mode'])){
     echo "<p>Hi, Guest!</p><br>";
     echo "<a href=\"login.php\">LOGIN</a><br>";
 }
+$conn = new mysqli("localhost", "user", "user", "CSCI4140");
+$q = "select mode from account where name=?";
+$sql = $conn->prepare($q);
+$sql->bind_param('s', $_SESSION["user"]);
+$result = $sql->execute();
+if($result->num_rows > 0){
+    $row = $result->fetch_assoc();
+    if($row['mode'] == 1){echo '<a href="admin.php">System Initialization</a><br>'; }
+}
 ?>
 
 <!--IMAGE DISPLAY-->
 <?php
-$conn = new mysqli("localhost", "user", "user", "CSCI4140");
 if(isset($_SESSION['mode'])){
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 ORDER BY time DESC';
 }else{
