@@ -29,9 +29,9 @@ if(isset($_FILES['image'])){
             header('Location: index.php');
          }
 
-        setcookie('filename','img/tmp/'.$filename, NULL, NULL, NULL, NULL, TRUE);  
-        setcookie('effect', 'none', NULL, NULL, NULL, NULL, TRUE);  
-        setcookie('lasteffect', 'none', NULL, NULL, NULL, NULL, TRUE);  
+        setcookie('filename','img/tmp/'.$filename, NULL, NULL, NULL, NULL, TRUE);
+        setcookie('effect', 'none', NULL, NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', 'none', NULL, NULL, NULL, NULL, TRUE);
          echo '<img src=\"img/tmp/'.$filename.'\"><br><p>effect</p><br>'.
 
         }else{
@@ -39,19 +39,19 @@ if(isset($_FILES['image'])){
             header('Location: index.php');
         }
 
-   
+
 }
 if(isset($_REQUEST['effect'])){
-    setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);  
+    setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
     $imagick = new \Imagick(realpath($_COOKIE['filename']));
 
     if($_REQUEST['effect'] == 'border'){
-        setcookie('effect', 'border', NULL, NULL, NULL, NULL, TRUE);  
+        setcookie('effect', 'border', NULL, NULL, NULL, NULL, TRUE);
         $imagick->borderImage('black', 10, 10);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_REQUEST['effect'] == 'lomo'){
-        setcookie('effect', 'lomo', NULL, NULL, NULL, NULL, TRUE);  
+        setcookie('effect', 'lomo', NULL, NULL, NULL, NULL, TRUE);
         $imagick->gammaImage(0.5);
         $imagick->modulateImage(100, 70, 100);
         $pixels = $imagick->getImageWidth() * $imagick->getImageHeight();
@@ -59,18 +59,33 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_REQUEST['effect'] == 'lf'){
-        setcookie('effect', 'lf', NULL, NULL, NULL, NULL, TRUE);  
-        $imagick->blurImage(100, 2); 
+        setcookie('effect', 'lf', NULL, NULL, NULL, NULL, TRUE);
+        $imagick2 = new \Imagick();
+        $imagick2->readImage(realpath("img/protected/flare.png"));
+        $imagick2->resizeimage(
+          $imagick->getImageWidth(),
+          $imagick->getImageHeight(),
+          \Imagick::FILTER_LANCZOS,
+          1);
+        $opacity = new \Imagick();
+        $opacity->newPseudoImage(
+          $imagick2->getImageHeight(),
+          $imagick2->getImageWidth(),
+          "gradient:gray(10%)-gray(90%)"
+        );
+        $opacity->rotateimage('black', 90);
+        $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+        $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
         header("Content-Type: imag/jpg");
-        echo $imagick->getImageBlob();
+        echo $imagick2->getImageBlob();
     }else if($_REQUEST['effect'] == 'bw'){
-        setcookie('effect', 'bw', NULL, NULL, NULL, NULL, TRUE);  
-        $imagick->blurImage(100, 2); 
+        setcookie('effect', 'bw', NULL, NULL, NULL, NULL, TRUE);
+        $imagick->blurImage(100, 2);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_REQUEST['effect'] == 'blur'){
-        setcookie('effect', 'blur', NULL, NULL, NULL, NULL, TRUE);  
-        $imagick->blurImage(100, 2); 
+        setcookie('effect', 'blur', NULL, NULL, NULL, NULL, TRUE);
+        $imagick->blurImage(100, 2);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else{
@@ -80,7 +95,7 @@ if(isset($_REQUEST['effect'])){
 }
 if(isset($_REQUEST['config'])){
     if($_REQUEST['config'] == 'save'){
-    
+
     }else if($_REQUEST['config'] == 'discard'){
 
     }else if($_REQUEST['config'] == 'cancel'){

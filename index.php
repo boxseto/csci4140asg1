@@ -22,16 +22,48 @@ if(isset($_SESSION['mode'])){
 <?php
 $conn = new mysqli("localhost", "user", "user", "CSCI4140");
 if(isset($_SESSION['mode'])){
-    $q = 'SELECT * FROM image ORDER BY time DESC';
+    $q = 'SELECT COUNT(*) FROM image ORDER BY time DESC';
 }else{
-    $q = 'SELECT * FROM image WHERE access=\'public\' ORDER BY time DESC';
+    $q = 'SELECT COUNT(*) FROM image WHERE access=\'public\' ORDER BY time DESC';
 }
 $sql = $conn->query($q);
 if($sql->num_rows > 0){
-    while($row = $result->fetch_assoc()){
-        echo "<img src=\"img/upload/" . htmlspecialchars($row["name"]) . "\">"
+    $row = $sql->fetch_assoc();
+    $totalrow = $row[0];
+}
+$totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
 
-    } 
+if (isset($_GET['current']) && is_numeric($_GET['current'])) {
+    $currentpage = $_GET['current'];
+}else{
+    $currentpage = 1;
+}
+if ($currentpage > $totalpages) {$currentpage = $totalpages;}
+if ($currentpage < 1) {$currentpage = 1;}
+
+$sql = "SELECT name FROM image ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
+$result = $conn->query($sql);
+
+if($result->num_rows > 0){
+  while($row = $result->fetch_assoc()){
+    echo "<img src=\"img\upload\" . $row['name'] . "\"\><br>";
+  }
+}
+
+if ($currentpage > 1) {
+    echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
+}
+for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
+    if (($i > 0) && ($i <= $totalpages)) {
+        if ($i == $currentpage) {
+            echo " [<b>" . $i . "</b>] ";
+        } else {
+            echo " <a href='index.php?current=" . $i . "'>" . $i . "</a> ";
+        }
+    }
+}
+if ($currentpage != $totalpages) {
+    echo " <a href='index.php?current=" . $currentpage+1 . "'> > </a> ";
 }
 ?>
 
@@ -43,7 +75,7 @@ if(!isset($_SESSION['mode'])){
 ?>
 <h3> Upload photo</h3><br>
 <form method="POST" action="editor.php" ectype="multipart/form-data">
-<p>Mode:</p> 
+<p>Mode:</p>
 <select name="access">
 <option value="public">Public</option>
 <option value="private">Public</option>
