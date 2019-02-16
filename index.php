@@ -39,22 +39,19 @@ if($arr){
 <!--IMAGE DISPLAY-->
 <?php
 if(isset($_SESSION['mode'])){
-    $q = 'SELECT COUNT(*) FROM image WHERE temp=0 ORDER BY time DESC';
+    $q = 'SELECT COUNT(*) FROM image WHERE temp=0';
 }else{
-    $q = 'SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\' ORDER BY time DESC';
+    $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\'";
 }
 $sql = $conn->prepare($q);
 $sql->execute();
 $arr = $sql->fetchAll();
-echo "fetch analysis\n";
-echo var_dump($arr);
 if($arr){
     $row = $arr[0];
     $totalrow = $row[0];
 }
 
 $totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
-echo "fetch finished. total row:" . $totalrow. "\n";
 
 if (isset($_GET['current']) && is_numeric($_GET['current'])) {
     $currentpage = $_GET['current'];
@@ -64,7 +61,6 @@ if (isset($_GET['current']) && is_numeric($_GET['current'])) {
 if ($currentpage > $totalpages) {$currentpage = $totalpages;}
 if ($currentpage < 1) {$currentpage = 1;}
 
-echo "start searching for image\n";
 
 $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
 $sql = $conn->prepare($q);
@@ -75,8 +71,6 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $tempcount += 1;
 }
 
-echo "display image ended\n";
-echo "display page number\n";
 
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";

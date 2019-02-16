@@ -39,7 +39,7 @@ if(isset($_FILES['image'])){
          setcookie('filename',$filename, time()+60*60*24*30 , "/");
          setcookie('effect', 'none', time()+60*60*24*30 , "/");
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
-         echo '<img src=\"img/tmp/'.$filename.'\"><br>';
+         echo '<img src="img/tmp/'.$filename.'"><br>';
     }else{
         $_SESSION['error'] = 'file format different';
         header('Location: index.php');
@@ -176,7 +176,7 @@ if(isset($_REQUEST['config'])){
     }else if($_REQUEST['config'] == 'cancel'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'blur', time()+60*60*24*30 , "/");
-        echo '<img src=\"img/tmp/'.$_COOKIE['filename'].'\"><br>';
+        echo '<img src="img/tmp/'.$_COOKIE['filename'].'"><br>';
     }else{
         $_SESSION['error'] = 'I dont know what are you doing.';
         header('Location: index.php');
@@ -185,14 +185,14 @@ if(isset($_REQUEST['config'])){
 
 //display image
     echo '<p>effect</p><br>';
-    echo '<a href=\"editor.php?effect=border\">Border</a><br>'.
-    '<a href=\"editor.php?effect=lomo\">Lomo</a><br>'.
-    '<a href=\"editor.php?effect=lf\"></a>Lens Flare<br>'.
-    '<a href=\"editor.php?effect=bw\">Black White</a><br>'.
-    '<a href=\"editor.php?effect=blur\">Blur</a><br>'.
+    echo '<a href="editor.php?effect=border">Border</a><br>'.
+    '<a href="editor.php?effect=lomo">Lomo</a><br>'.
+    '<a href="editor.php?effect=lf"></a>Lens Flare<br>'.
+    '<a href="editor.php?effect=bw">Black White</a><br>'.
+    '<a href="editor.php?effect=blur">Blur</a><br>'.
     '<br><br><p>Save changes</p><br>'.
-    '<a href=\"editor.php?congfig=save\">Save</a><br>'.
-    '<a href=\"editor.php?config=discard\">Discard</a><br>'.
-    '<a href=\"editor.php?config=cancel\">Cancel change</a><br>';
+    '<a href="editor.php?congfig=save">Save</a><br>'.
+    '<a href="editor.php?config=discard">Discard</a><br>'.
+    '<a href="editor.php?config=cancel">Cancel change</a><br>';
 
 ?>

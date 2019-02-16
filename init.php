@@ -13,13 +13,13 @@ $q = "Drop table image";
 $conn->query($q);
 $q = "DROP table account";
 $conn->query($q);
-$q = "create table image (id int not null auto_increment, name varchar(50), creator varchar(50), access varchar(10), time TIME, temp int not null default 1, primary key (id))";
+$q = "create table image (id SERIAL, name varchar(50), creator varchar(50), access varchar(10), time TIME, temp int not null default 1, primary key (id))";
 $conn->query($q);
 $q = "create table account (username varchar(20), pass varchar(20), mode int)";
 $conn->query($q);
-$q = "Insert into account (username, pass, mode) values (\"admin\", \"minda123\", 1)";
+$q = "Insert into account (username, pass, mode) values (\'admin\', \'minda123\', 1)";
 $conn->query($q);
-$q = "Insert into account (username, pass, mode) values (\"user\", \"csci4140\", 0)";
+$q = "Insert into account (username, pass, mode) values (\'user\', \'csci4140\', 0)";
 $conn->query($q);
 
 $files = glob('img/upload/*');
