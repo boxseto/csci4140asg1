@@ -10,7 +10,7 @@ if(isset($_SESSION['error'])) echo $_SESSION['error'];
 $_SESSION['error'] = '';
 
 if(isset($_SESSION['mode'])){
-    echo "<p>Hi, " . $_SESSION["user"] . "!</p><br>";
+    echo "<p>Hi, " . $_COOKIE["user"] . "!</p><br>";
     echo "<a href=\"logout.php\">LOGOUT</a><br>";
 }else{
     echo "<p>Hi, Guest!</p><br>";
@@ -28,7 +28,7 @@ $conn = new PDO("pgsql:" . sprintf(
     ));
 $q = "SELECT mode FROM account WHERE username=?";
 $sql = $conn->prepare($q);
-$sql->execute([$_SESSION["user"]]);
+$sql->execute([$_COOKIE["user"]]);
 $arr = $sql->fetchAll(PDO::FETCH_ASSOC);
 if($arr){
     $row = $arr[0];
@@ -88,7 +88,7 @@ if ($currentpage != $totalpages) {
 
 <!--UPload-->
 <?php
-if(!isset($_SESSION['mode'])){
+if($_COOKIE['logged'] != 'true'){
     echo '<!--';
 }
 ?>
@@ -105,7 +105,7 @@ if(!isset($_SESSION['mode'])){
 <input type="submit" value="Upload" />
 </form>
 <?php
-if(!isset($_SESSION['mode'])){
+if($_COOKIE['logged'] != 'true' ){
     echo '-->';
 }
 ?>
