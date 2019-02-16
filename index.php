@@ -10,7 +10,7 @@ if(isset($_SESSION['error'])) echo $_SESSION['error'];
 $_SESSION['error'] = '';
 
 if(isset($_SESSION['mode'])){
-    echo "<p>Hi, " . $_COOKIE["user"] . "!</p><br>";
+    echo "<p>Hi, " . $_COOKIE["name"] . "!</p><br>";
     echo "<a href=\"logout.php\">LOGOUT</a><br>";
 }else{
     echo "<p>Hi, Guest!</p><br>";
@@ -28,7 +28,7 @@ $conn = new PDO("pgsql:" . sprintf(
     ));
 $q = "SELECT mode FROM account WHERE username=?";
 $sql = $conn->prepare($q);
-$sql->execute([$_COOKIE["user"]]);
+$sql->execute([$_COOKIE["name"]]);
 $arr = $sql->fetchAll(PDO::FETCH_ASSOC);
 if($arr){
     $row = $arr[0];
@@ -38,19 +38,26 @@ if($arr){
 
 <!--IMAGE DISPLAY-->
 <?php
+echo "start listing\n";
 if(isset($_SESSION['mode'])){
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 ORDER BY time DESC';
 }else{
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\' ORDER BY time DESC';
 }
+echo "start prepare\n";
 $sql = $conn->prepare($q);
+echo "start execute\n";
 $sql->execute();
-$arr = $sql->fetchAll(PDO::FETCH_ASSOC);
+echo "start fetch\n";
+$arr = $sql->fetchAll();
+echo "fetch analysis\n";
 if($arr){
     $row = $arr[0];
     $totalrow = $row[0];
 }
+
 $totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
+echo "fetch finished. total row:" . $totalrow. "\n";
 
 if (isset($_GET['current']) && is_numeric($_GET['current'])) {
     $currentpage = $_GET['current'];
@@ -60,6 +67,8 @@ if (isset($_GET['current']) && is_numeric($_GET['current'])) {
 if ($currentpage > $totalpages) {$currentpage = $totalpages;}
 if ($currentpage < 1) {$currentpage = 1;}
 
+echo "start searching for image\n";
+
 $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
 $sql = $conn->prepare($q);
 $sql->execute();
@@ -68,6 +77,9 @@ while($row = $conn->fetch(PDO::FETCH_ASSOC)){
   echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
   $tempcount += 1;
 }
+
+echo "display image ended\n";
+echo "display page number\n";
 
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";

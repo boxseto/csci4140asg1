@@ -36,9 +36,9 @@ if(isset($_FILES['image'])){
              header('Location: index.php');
          }
 
-         setcookie('filename',$filename, time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-         setcookie('effect', 'none', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-         setcookie('lasteffect', 'none', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+         setcookie('filename',$filename, time()+60*60*24*30 , "/");
+         setcookie('effect', 'none', time()+60*60*24*30 , "/");
+         setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
          echo '<img src=\"img/tmp/'.$filename.'\"><br>';
     }else{
         $_SESSION['error'] = 'file format different';
@@ -51,14 +51,14 @@ if(isset($_REQUEST['effect'])){
     $imagick = new \Imagick(realpath($_COOKIE['filename']));
 
     if($_COOKIE['effect'] == 'border'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'border', time()+60*60*24*30, NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'border', time()+60*60*24*30, "/");
         $imagick->borderImage('black', 10, 10);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'lomo'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'lomo', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'lomo', time()+60*60*24*30 , "/");
         $imagick->gammaImage(0.5);
         $imagick->modulateImage(100, 70, 100);
         $pixels = $imagick->getImageWidth() * $imagick->getImageHeight();
@@ -66,8 +66,8 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'lf'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'lf', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'lf', time()+60*60*24*30 , "/");
         $imagick2 = new \Imagick();
         $imagick2->readImage(realpath("img/protected/flare.png"));
         $imagick2->resizeimage(
@@ -87,14 +87,14 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick2->getImageBlob();
     }else if($_COOKIE['effect'] == 'bw'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'bw', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'bw', time()+60*60*24*30 , "/");
         $imagick->modulateImage(100, 0, 100);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_COOKIE['effect'] == 'blur'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'blur', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'blur', time()+60*60*24*30 , "/");
         $imagick->blurImage(100, 2);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
@@ -121,16 +121,16 @@ if(isset($_REQUEST['config'])){
         //copy effect
         $imagick = new \Imagick(realpath($_COOKIE['filename']));
         if($_COOKIE['effect'] == 'border'){
-            setcookie('effect', 'border', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+            setcookie('effect', 'border', time()+60*60*24*30 , "/");
             $imagick->borderImage('black', 10, 10);
         }else if($_COOKIE['effect'] == 'lomo'){
-            setcookie('effect', 'lomo', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+            setcookie('effect', 'lomo', time()+60*60*24*30 , "/");
             $imagick->gammaImage(0.5);
             $imagick->modulateImage(100, 70, 100);
             $pixels = $imagick->getImageWidth() * $imagick->getImageHeight();
             $imagick->linearStretchImage(0.3*$pixels, 0.2*$pixels);
         }else if($_COOKIE['effect'] == 'lf'){
-            setcookie('effect', 'lf', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+            setcookie('effect', 'lf', time()+60*60*24*30 , "/");
             $imagick2 = new \Imagick();
             $imagick2->readImage(realpath("img/protected/flare.png"));
             $imagick2->resizeimage(
@@ -148,10 +148,10 @@ if(isset($_REQUEST['config'])){
             $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
             $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
         }else if($_COOKIE['effect'] == 'bw'){
-            setcookie('effect', 'bw', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+            setcookie('effect', 'bw', time()+60*60*24*30 , "/");
             $imagick->modulateImage(100, 0, 100);
         }else if($_COOKIE['effect'] == 'blur'){
-            setcookie('effect', 'blur', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+            setcookie('effect', 'blur', time()+60*60*24*30 , "/");
             $imagick->blurImage(100, 2);
         }
         $imagick->writeImage(realpath($_COOKIE['filename']));
@@ -174,8 +174,8 @@ if(isset($_REQUEST['config'])){
         unlink(realpath("img/tmp/".$_COOKIE['filename']));
         header('Location: index.php');
     }else if($_REQUEST['config'] == 'cancel'){
-        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
-        setcookie('effect', 'blur', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);
+        setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
+        setcookie('effect', 'blur', time()+60*60*24*30 , "/");
         echo '<img src=\"img/tmp/'.$_COOKIE['filename'].'\"><br>';
     }else{
         $_SESSION['error'] = 'I dont know what are you doing.';

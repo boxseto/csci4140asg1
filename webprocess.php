@@ -24,13 +24,13 @@ function login_chk(){
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)){
         $counter += 1;
         $mode = $row['mode'];
-        setcookie('logged', 'true', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
+        setcookie('logged', 'true', time()+60*60*24*30 , "/");
         if($mode == 0){
             $_SESSION['mode'] = 0;
-            setcookie('name', $user, time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
+            setcookie('name', $user, time()+60*60*24*30 , "/");
         }
         else if($mode == 1){
-            setcookie('name', $user, time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
+            setcookie('name', $user, time()+60*60*24*30 , "/");  
             $_SESSION['mode'] = 1;
         }
         header('Location: index.php');
@@ -39,7 +39,7 @@ function login_chk(){
         $_SESSION['error'] = 'INCORRECT PASSWORD OR USERNAME.';
         header('Location: index.php');
     }
-    
+
 }
 
 ?>
