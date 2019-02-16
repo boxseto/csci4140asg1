@@ -21,7 +21,7 @@ function login_chk(){
     $sql = $conn->prepare($q);
     $sql->execute([$user, $pass]);
     $counter = 0;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    while ($row = $conn->fetch(PDO::FETCH_ASSOC)){
         $counter += 1;
         $mode = $row['mode'];
         setcookie('logged', 'true', NULL, NULL, NULL, NULL, TRUE);  
