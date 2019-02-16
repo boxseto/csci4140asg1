@@ -10,7 +10,7 @@ if(isset($_FILES['image'])){
          $db = parse_url(getenv("DATABASE_URL"));
          $dbpath = ltrim($db["path"], "/");
          $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
              $db["host"],
              $db["port"],
              $db["user"],
@@ -108,7 +108,7 @@ if(isset($_REQUEST['config'])){
          $db = parse_url(getenv("DATABASE_URL"));
          $dbpath = ltrim($db["path"], "/");
          $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
              $db["host"],
              $db["port"],
              $db["user"],
@@ -161,7 +161,7 @@ if(isset($_REQUEST['config'])){
          $db = parse_url(getenv("DATABASE_URL"));
          $dbpath = ltrim($db["path"], "/");
          $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
              $db["host"],
              $db["port"],
              $db["user"],
