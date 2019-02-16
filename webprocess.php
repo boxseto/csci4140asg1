@@ -24,13 +24,13 @@ function login_chk(){
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)){
         $counter += 1;
         $mode = $row['mode'];
-        setcookie('logged', 'true', NULL, NULL, NULL, NULL, TRUE);  
+        setcookie('logged', 'true', time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
         if($mode == 0){
             $_SESSION['mode'] = 0;
-            setcookie('name', $user, NULL, NULL, NULL, NULL, TRUE);  
+            setcookie('name', $user, time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
         }
         else if($mode == 1){
-            setcookie('name', $user, NULL, NULL, NULL, NULL, TRUE);  
+            setcookie('name', $user, time()+60*60*24*30 , NULL, NULL, NULL, TRUE);  
             $_SESSION['mode'] = 1;
         }
         header('Location: index.php');
