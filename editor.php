@@ -140,7 +140,7 @@ if(isset($_REQUEST['config'])){
             $imagick->blurImage(100, 2);
         }
         $imagick->writeImage(realpath($_COOKIE['filename']));
-        rename("img/temp/"$_COOKIE['filename'], "img/upload/".$_COOKIE['filename']);
+        rename("img/temp/".$_COOKIE['filename'], "img/upload/".$_COOKIE['filename']);
         header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
         $conn = new mysqli("localhost", "user", "user", "CSCI4140");
@@ -151,7 +151,7 @@ if(isset($_REQUEST['config'])){
     }else if($_REQUEST['config'] == 'cancel'){
         setcookie('lasteffect', $_COOKIE['effect'], NULL, NULL, NULL, NULL, TRUE);
         setcookie('effect', 'blur', NULL, NULL, NULL, NULL, TRUE);
-        echo '<img src=\"img/tmp/'.$_COOKIE['filename'].'\"><br>'.
+        echo '<img src=\"img/tmp/'.$_COOKIE['filename'].'\"><br>';
     }else{
         $_SESSION['error'] = 'I dont know what are you doing.';
         header('Location: index.php');
@@ -159,7 +159,7 @@ if(isset($_REQUEST['config'])){
 }
 
 //display image
-    echo '<p>effect</p><br>'.
+    echo '<p>effect</p><br>';
     echo '<a href=\"editor.php?effect=border\">Border</a><br>'.
     '<a href=\"editor.php?effect=lomo\">Lomo</a><br>'.
     '<a href=\"editor.php?effect=lf\"></a>Lens Flare<br>'.

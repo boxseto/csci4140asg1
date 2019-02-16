@@ -17,7 +17,10 @@ if(isset($_SESSION['mode'])){
     echo "<a href=\"login.php\">LOGIN</a><br>";
 }
 $conn = new mysqli("localhost", "user", "user", "CSCI4140");
-$q = "select mode from account where name=?";
+if(mysqli_connect_error()){
+    die('Connect Error(' . mysqli_connect_errorno() . ')' . mysqli_connect_error());
+}
+$q = "SELECT mode FROM account WHERE user=?";
 $sql = $conn->prepare($q);
 $sql->bind_param('s', $_SESSION["user"]);
 $result = $sql->execute();
@@ -54,7 +57,7 @@ $result = $conn->query($sql);
 
 if($result->num_rows > 0){
   while($row = $result->fetch_assoc()){
-    echo "<img src=\"img\upload\" . $row['name'] . "\"\><br>";
+    echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
   }
 }
 
