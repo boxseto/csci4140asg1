@@ -38,19 +38,16 @@ if($arr){
 
 <!--IMAGE DISPLAY-->
 <?php
-echo "start listing\n";
 if(isset($_SESSION['mode'])){
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 ORDER BY time DESC';
 }else{
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\' ORDER BY time DESC';
 }
-echo "start prepare\n";
 $sql = $conn->prepare($q);
-echo "start execute\n";
 $sql->execute();
-echo "start fetch\n";
 $arr = $sql->fetchAll();
 echo "fetch analysis\n";
+echo var_dump($arr);
 if($arr){
     $row = $arr[0];
     $totalrow = $row[0];
@@ -73,7 +70,7 @@ $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($current
 $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
-while($row = $conn->fetch(PDO::FETCH_ASSOC)){
+while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
   $tempcount += 1;
 }
