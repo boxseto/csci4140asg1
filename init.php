@@ -9,7 +9,6 @@ $conn = new PDO("pgsql:" . sprintf(
     $db["pass"],
     $dbpath
     ));
-//$conn = new mysqli("localhost", 'user', 'user', 'CSCI4140');
 $q = "Drop table image";
 $conn->query($q);
 $q = "DROP table account";
@@ -22,7 +21,6 @@ $q = "Insert into account (user, pass, mode) values (\"admin\", \"minda123\", 1)
 $conn->query($q);
 $q = "Insert into account (user, pass, mode) values (\"user\", \"csci4140\", 0)";
 $conn->query($q);
-$conn->close();
 
 $files = glob('img/upload/*');
 foreach($files as $file){

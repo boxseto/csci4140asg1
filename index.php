@@ -26,16 +26,12 @@ $conn = new PDO("pgsql:" . sprintf(
     $db["pass"],
     $dbpath
     ));
-//$conn = new mysqli("localhost", "user", "user", "CSCI4140");
-//if(mysqli_connect_error()){
-//    die('Connect Error(' . mysqli_connect_errorno() . ')' . mysqli_connect_error());
-//}
 $q = "SELECT mode FROM account WHERE user=?";
 $sql = $conn->prepare($q);
-$sql->bind_param('s', $_SESSION["user"]);
-$result = $sql->execute();
-if($result->num_rows > 0){
-    $row = $result->fetch_assoc();
+$sql->execute([$_SESSION["user"]]);
+$arr = $sql->fetchAll(PDO::FETCH_ASSOC);
+if($arr){
+    $row = $arr[0];
     if($row['mode'] == 1){echo '<a href="admin.php">System Initialization</a><br>'; }
 }
 ?>
@@ -47,9 +43,11 @@ if(isset($_SESSION['mode'])){
 }else{
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\' ORDER BY time DESC';
 }
-$sql = $conn->query($q);
-if($sql->num_rows > 0){
-    $row = $sql->fetch_assoc();
+$sql = $conn->prepare($q);
+$sql->execute();
+$arr = $sql->fetchAll(PDO::FETCH_ASSOC);
+if($arr){
+    $row = $arr[0];
     $totalrow = $row[0];
 }
 $totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
@@ -62,13 +60,13 @@ if (isset($_GET['current']) && is_numeric($_GET['current'])) {
 if ($currentpage > $totalpages) {$currentpage = $totalpages;}
 if ($currentpage < 1) {$currentpage = 1;}
 
-$sql = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
-$result = $conn->query($sql);
-
-if($result->num_rows > 0){
-  while($row = $result->fetch_assoc()){
-    echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
-  }
+$q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
+$sql = $conn->prepare($q);
+$sql->execute();
+$tempcount = 0;
+while($row = $conn->fetch(PDO::FETCH_ASSOC)){
+  echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
+  $tempcount += 1;
 }
 
 if ($currentpage > 1) {

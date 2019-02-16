@@ -17,29 +17,24 @@ if(isset($_FILES['image'])){
              $db["pass"],
              $dbpath
              ));
-         //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
-         $sql->bind_param('sss', $_FILES['image']['name'], $_SESSION['user'], $access);
-         $sql->execute();
+         $sql->execute([$_FILES['image']['name'], $_SESSION['user'], $access]);
 
          $file_tmp = $_FILES['image']['tmp_name'];
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
          $expensions = array("jpg", "gif", "png");
          if(in_array($file_ext, $expensions) == true){
-             $pid = $conn->insert_id;
+             $pid = $conn->lastInsertId();
              $file_name = $pid . '.' . $file_ext;
              $q = "UPDATE image SET name=? WHERE id=?";
              $sql = $conn->prepare($q);
-             $sql->bind_param('si', $filename, $pid);
-             $sql->execute();
+             $sql->execute([$filename, $pid]);
              move_uploaded_file($file_tmp, "img/temp/" . $file_name);
          }else{
              $_SESSION['error'] = 'file format different';
              header('Location: index.php');
          }
-
-         $conn->close();
 
          setcookie('filename',$filename, NULL, NULL, NULL, NULL, TRUE);
          setcookie('effect', 'none', NULL, NULL, NULL, NULL, TRUE);
@@ -120,9 +115,9 @@ if(isset($_REQUEST['config'])){
              $db["pass"],
              $dbpath
              ));
-        //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
         $q = "Update image set temp = 0 WHERE name=\"". $COOKIE['filename'] ."\"";
-        $conn->query($q);
+        $sql = $conn->prepare($q);
+        $sql->execute();
         //copy effect
         $imagick = new \Imagick(realpath($_COOKIE['filename']));
         if($_COOKIE['effect'] == 'border'){
@@ -173,9 +168,9 @@ if(isset($_REQUEST['config'])){
              $db["pass"],
              $dbpath
              ));
-        //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
         $q = "DELETE FROM image WHERE name=\"" . $_COOKIE['filename'] . "\"";
-        $conn->query($q);
+        $sql = $conn->prepare($q);
+        $sql->execute();
         unlink(realpath("img/tmp/".$_COOKIE['filename']));
         header('Location: index.php');
     }else if($_REQUEST['config'] == 'cancel'){
