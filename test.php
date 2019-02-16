@@ -5,7 +5,7 @@ $s3 = new Aws\S3\S3Client([
     'version'  => '2006-03-01',
     'region'   => 'ap-southeast-1',
 ]);
-$bucket = getenv('S3_BUCKET_NAME')?: die('No "S3_BUCKET_NAME" config var in found in env!');
+$bucket = getenv('S3_BUCKET')?: die('No "S3_BUCKET_NAME" config var in found in env!');
 ?>
 <html>
     <head><meta charset="UTF-8"></head>
