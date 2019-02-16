@@ -6,7 +6,17 @@ if($function = "login"){login_chk();}
 function login_chk(){
     $user = htmlspecialchars($_REQUEST["username"]);
     $pass = htmlspecialchars($_REQUEST["password"]);
-    $conn = new mysqli("localhost", "user", "user", "CSCI4140");
+    $db = parse_url(getenv("DATABASE_URL"));
+    $dbpath = ltrim($db["path"], "/");
+    $conn = new PDO("pgsql:" . sprintf(
+        "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+        $db["host"],
+        $db["port"],
+        $db["user"],
+        $db["pass"],
+        $dbpath
+        ));
+    //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
     $q = 'SELECT mode FROM account WHERE user=? AND pass=?';
     $sql = $conn->prepare($q);
     $sql->bind_param('ss', $user, $pass);

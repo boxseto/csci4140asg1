@@ -16,10 +16,20 @@ if(isset($_SESSION['mode'])){
     echo "<p>Hi, Guest!</p><br>";
     echo "<a href=\"login.php\">LOGIN</a><br>";
 }
-$conn = new mysqli("localhost", "user", "user", "CSCI4140");
-if(mysqli_connect_error()){
-    die('Connect Error(' . mysqli_connect_errorno() . ')' . mysqli_connect_error());
-}
+$db = parse_url(getenv("DATABASE_URL"));
+$dbpath = ltrim($db["path"], "/");
+$conn = new PDO("pgsql:" . sprintf(
+    "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+    $db["host"],
+    $db["port"],
+    $db["user"],
+    $db["pass"],
+    $dbpath
+    ));
+//$conn = new mysqli("localhost", "user", "user", "CSCI4140");
+//if(mysqli_connect_error()){
+//    die('Connect Error(' . mysqli_connect_errorno() . ')' . mysqli_connect_error());
+//}
 $q = "SELECT mode FROM account WHERE user=?";
 $sql = $conn->prepare($q);
 $sql->bind_param('s', $_SESSION["user"]);

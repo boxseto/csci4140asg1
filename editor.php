@@ -7,7 +7,17 @@ if(isset($_FILES['image'])){
         mime_content_type($_FILES['image']) == 'image/gif'){
 
          //insert image
-         $conn = new mysqli("localhost", "user", "user", "CSCI4140");
+         $db = parse_url(getenv("DATABASE_URL"));
+         $dbpath = ltrim($db["path"], "/");
+         $conn = new PDO("pgsql:" . sprintf(
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             $db["host"],
+             $db["port"],
+             $db["user"],
+             $db["pass"],
+             $dbpath
+             ));
+         //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
          $sql->bind_param('sss', $_FILES['image']['name'], $_SESSION['user'], $access);
@@ -100,7 +110,17 @@ if(isset($_REQUEST['effect'])){
 }
 if(isset($_REQUEST['config'])){
     if($_REQUEST['config'] == 'save'){
-        $conn = new mysqli("localhost", "user", "user", "CSCI4140");
+         $db = parse_url(getenv("DATABASE_URL"));
+         $dbpath = ltrim($db["path"], "/");
+         $conn = new PDO("pgsql:" . sprintf(
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             $db["host"],
+             $db["port"],
+             $db["user"],
+             $db["pass"],
+             $dbpath
+             ));
+        //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
         $q = "Update image set temp = 0 WHERE name=\"". $COOKIE['filename'] ."\"";
         $conn->query($q);
         //copy effect
@@ -143,7 +163,17 @@ if(isset($_REQUEST['config'])){
         rename("img/temp/".$_COOKIE['filename'], "img/upload/".$_COOKIE['filename']);
         header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
-        $conn = new mysqli("localhost", "user", "user", "CSCI4140");
+         $db = parse_url(getenv("DATABASE_URL"));
+         $dbpath = ltrim($db["path"], "/");
+         $conn = new PDO("pgsql:" . sprintf(
+             "host=%s;port=%s;user=%s;password=%s;dbname=%s"
+             $db["host"],
+             $db["port"],
+             $db["user"],
+             $db["pass"],
+             $dbpath
+             ));
+        //$conn = new mysqli("localhost", "user", "user", "CSCI4140");
         $q = "DELETE FROM image WHERE name=\"" . $_COOKIE['filename'] . "\"";
         $conn->query($q);
         unlink(realpath("img/tmp/".$_COOKIE['filename']));
