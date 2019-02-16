@@ -21,8 +21,7 @@ function login_chk(){
     $sql = $conn->prepare($q);
     $sql->execute([$user, $pass]);
     $counter = 0;
-/*
-    while ($row = $conn->fetch(PDO::FETCH_ASSOC)){
+    while ($row = $sql->fetch(PDO::FETCH_ASSOC)){
         $counter += 1;
         $mode = $row['mode'];
         setcookie('logged', 'true', NULL, NULL, NULL, NULL, TRUE);  
@@ -36,11 +35,9 @@ function login_chk(){
         }
         header('Location: index.php');
     }
-*/
-echo "problem of fetch";
     if($counter == 0){
         $_SESSION['error'] = 'INCORRECT PASSWORD OR USERNAME.';
-        //header('Location: index.php');
+        header('Location: index.php');
     }
     
 }
