@@ -79,6 +79,8 @@ if(isset($_REQUEST['effect'])){
         $pixels = $imagick->getImageWidth() * $imagick->getImageHeight();
         $imagick->linearStretchImage(0.3*$pixels, 0.2*$pixels);
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
+    }else if($_REQUEST['effect'] == 'none'){
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'lf'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'lf', time()+60*60*24*30 , "/");
@@ -111,7 +113,7 @@ if(isset($_REQUEST['effect'])){
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else{
         setcookie('error', 'I dont know what are you doing.', time()+60*5 , "/");
-        //header('Location: index.php');
+        header('Location: index.php');
     }
 }
 if(isset($_REQUEST['config'])){
@@ -126,11 +128,13 @@ if(isset($_REQUEST['config'])){
              $db["pass"],
              $dbpath
              ));
-        $q = "Update image set temp = 0 WHERE name=\"". $COOKIE['filename'] ."\"";
+        $q = "Update image set temp = 0 WHERE name='". $COOKIE['filename'] ."'";
         $sql = $conn->prepare($q);
         $sql->execute();
         //copy effect
-        $imagick = new \Imagick(realpath($_COOKIE['filename']));
+        $imagick = new \Imagick();
+        $image = file_get_contents($_COOKIE['filepath']);
+        $imagick -> readImageBlob($image);
         if($_COOKIE['effect'] == 'border'){
             setcookie('effect', 'border', time()+60*60*24*30 , "/");
             $imagick->borderImage('black', 10, 10);
@@ -165,8 +169,21 @@ if(isset($_REQUEST['config'])){
             setcookie('effect', 'blur', time()+60*60*24*30 , "/");
             $imagick->blurImage(100, 2);
         }
-        $imagick->writeImage(realpath($_COOKIE['filename']));
-        rename("img/temp/".$_COOKIE['filename'], "img/upload/".$_COOKIE['filename']);
+        //delete origional file in s3
+        try{
+           $s3->deleteObject([
+             'Bucket' => $bucket,
+             'Key'    => $_COOKIE['filename']
+             ]);
+        }catch(Exception $e){echo 'Cannot delete';}
+        //write image
+        $tmp = tempnam('/tmp', 'upload_');
+        $image->writeImage($tmp);
+        $result = $s3->create_object($bucket, $_COOKIE['filename'],array(
+            'fileUpload' => $tmp,
+            'acl' => AmazonS3::ACL_PUBLIC,
+            'contentType' => 'image/' . $_COOKIE['filetype'],
+            ));
         header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
          $db = parse_url(getenv("DATABASE_URL"));
@@ -182,12 +199,18 @@ if(isset($_REQUEST['config'])){
         $q = "DELETE FROM image WHERE name=\"" . $_COOKIE['filename'] . "\"";
         $sql = $conn->prepare($q);
         $sql->execute();
-        unlink(realpath("img/tmp/".$_COOKIE['filename']));
-        header('Location: index.php');
+        //delete file in s3
+        try{
+           $s3->deleteObject([
+             'Bucket' => $bucket,
+             'Key'    => $_COOKIE['filename']
+             ]);
+        }catch(Exception $e){echo 'Cannot delete';}
+        //header('Location: index.php');
     }else if($_REQUEST['config'] == 'cancel'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
-        setcookie('effect', 'blur', time()+60*60*24*30 , "/");
-        echo '<img src="img/tmp/'.$_COOKIE['filename'].'"><br>';
+        setcookie('effect', 'none', time()+60*60*24*30 , "/");
+        header('Location: editor.php?effect=none');
     }else{
         $_SESSION['error'] = 'I dont know what are you doing.';
         header('Location: index.php');
@@ -198,7 +221,7 @@ if(isset($_REQUEST['config'])){
     echo '<p>effect</p><br>';
     echo '<a href="editor.php?effect=border">Border</a><br>'.
     '<a href="editor.php?effect=lomo">Lomo</a><br>'.
-    '<a href="editor.php?effect=lf"></a>Lens Flare<br>'.
+    '<a href="editor.php?effect=lf">Lens Flare</a><br>'.
     '<a href="editor.php?effect=bw">Black White</a><br>'.
     '<a href="editor.php?effect=blur">Blur</a><br>'.
     '<br><br><p>Save changes</p><br>'.
