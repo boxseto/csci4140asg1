@@ -105,9 +105,8 @@ if(isset($_REQUEST['effect'])){
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
         */
         //$imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
-        $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+        $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, \Imagick::CHANNEL_ALL);
         
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'bw'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
