@@ -2,35 +2,35 @@
 ### Link To Heroku app: [Here](https://csci4140-asg1-seto.herokuapp.com/index.php)
 
 ## Files Introduction
-* PHP Files
-  * admin.php
+* ##### PHP Files
+  * __admin.php__
     * Place For admin to confirm system's initialization.
-  * editor.php
+  * __editor.php__
     * Place For hosting the editor, as the "editing stage" after file upload
-  * final.php
+  * __final.php__
     * Place For users to review final image.
-  * finish.php
+  * __finish.php__
     * Confirm message that marks the end of system initialization for admin.
-  * index.php
+  * __index.php__
     * Main page. Provides gallery, upload dialogue and access control header.
-  * init.php
+  * __init.php__
     * Initialization process for admin.
-  * login.php
+  * __login.php__
     * cointains a form for user-login. 
-  * logout.php
+  * __logout.php__
     * cointains functions to clear all cookies and session used, for logging out purpose.
-  * webprocess.php
+  * __webprocess.php__
     * Process page. Currently it is only for checking log in information.
-* Other Files
-  * composer.json
+* ##### Other Files
+  * __composer.json__
     * cointains required modules and corresponding module to use in the app.
-  * composer.lock
+  * __composer.lock__
     * auto generated file by composer.
-  * .gitignore
+  * __.gitignore__
     * ignore composer-generated files when push
-  * README.md
+  * __README.md__
     * this file :) provide introduction to this assignment
-  * img/protected/flare.png
+  * __img/protected/flare.png__
     * folder storing image used in filter.
 
 ## Development Procedure
