@@ -100,7 +100,7 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
 echo " <br> ";
 //place pagination
 if ($currentpage > 1) {
-    echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
+    echo " <a href='index.php?current=". ($currentpage-1) ."'> < </a> ";
 }
 
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
