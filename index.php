@@ -84,9 +84,11 @@ if(isset($_COOKIE['logged'])){
     $q = "SELECT name FROM image WHERE temp=0 AND access='public' ORDER BY time DESC LIMIT " . (($currentpage-1)*8) . ", 8";
 }
 
+  echo var_dump($q);
 $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
+echo 'start while loop';
 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   echo var_dump($row);
   $imagick = new \Imagick();
@@ -97,6 +99,7 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
   $tempcount += 1;
 }
+echo 'end while loop';
 
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
@@ -105,7 +108,7 @@ if ($currentpage > 1) {
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
     if (($i > 0) && ($i <= $totalpages)) {
         if ($i == $currentpage) {
-            echo " [<b>" . $i . "</b>] ";
+            echo " [<b>$i</b>] ";
         } else {
             echo " <a href='index.php?current=" . $i . "'>" . $i . "</a> ";
         }
