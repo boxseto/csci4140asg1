@@ -94,24 +94,8 @@ if(isset($_REQUEST['effect'])){
           \Imagick::FILTER_LANCZOS,
           1
           );
-        $opacity = new \Imagick();
-        $opacity->newPseudoImage(
-          $imagick->getImageHeight(),
-          $imagick->getImageWidth(),
-          "gradient:gray(10%)-gray(90%)"
-          );
-        $opacity->rotateimage('black', 90);
- 
-        //$imagick2->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
         $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_ATOP, 0, 0, Imagick::CHANNEL_ALPHA);
-        /*
-        //$imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
-        $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, \Imagick::CHANNEL_ALL);
-        */
-        
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'bw'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
@@ -154,16 +138,10 @@ if(isset($_REQUEST['config'])){
               $imagick->getImageWidth(),
               $imagick->getImageHeight(),
               \Imagick::FILTER_LANCZOS,
-              1);
-            $opacity = new \Imagick();
-            $opacity->newPseudoImage(
-              $imagick2->getImageHeight(),
-              $imagick2->getImageWidth(),
-              "gradient:gray(10%)-gray(90%)"
-            );
-            $opacity->rotateimage('black', 90);
-            $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
-            $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
+              1
+              );
+            $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
+            $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_ATOP, 0, 0, Imagick::CHANNEL_ALPHA);
         }else if($_COOKIE['effect'] == 'bw'){
             setcookie('effect', 'bw', time()+60*60*24*30 , "/");
             $imagick->modulateImage(100, 0, 100);
