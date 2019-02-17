@@ -54,7 +54,7 @@ if($arr){
     if($totalrow == 0){echo '<p>No photo exist.</p><br>';}
 }
 
-$totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
+$totalpages = ceil((isset($totalrow) ? $totalrow : 0) / 8);
 
 if (isset($_GET['current']) && is_numeric($_GET['current'])) {
     $currentpage = $_GET['current'];
@@ -74,7 +74,7 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $tempcount += 1;
 }
 
-echo "print page number: totalrow:". isset($totalrow)?$totalrow:0 . "    totalpages: $totalpages     currentpage:$currentpage";
+echo "print page number: totalrow:". (isset($totalrow) ? $totalrow : 0) . "    totalpages: $totalpages     currentpage:$currentpage";
 
 
 if ($currentpage > 1) {
