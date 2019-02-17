@@ -13,6 +13,7 @@ if(isset($_SESSION['mode'])){
     echo "<p>Hi, " . $_COOKIE["name"] . "!</p><br>";
     echo "<a href=\"logout.php\">LOGOUT</a><br>";
 }else{
+    foreach($_COOKIE as $key => $value){setcookie($key, '', 1);}
     echo "<p>Hi, Guest!</p><br>";
     echo "<a href=\"login.php\">LOGIN</a><br>";
 }
@@ -30,7 +31,7 @@ $q = "SELECT mode FROM account WHERE username=?";
 $sql = $conn->prepare($q);
 $sql->execute([$_COOKIE["name"]]);
 $arr = $sql->fetchAll(PDO::FETCH_ASSOC);
-if($arr && isset($_SESSION['mode'])){
+if($arr){
     $row = $arr[0];
     if($row['mode'] == 1){echo '<a href="admin.php">System Initialization</a><br>'; }
 }
@@ -75,19 +76,19 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
 
 
 if ($currentpage > 1) {
-    echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
+    echo " <a href='index.php?current=". $currentpage-1 ."'> a< </a> ";
 }
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
     if (($i > 0) && ($i <= $totalpages)) {
         if ($i == $currentpage) {
-            echo " [<b>" . $i . "</b>] ";
+            echo " [<b>" . $i . "s</b>] ";
         } else {
-            echo " <a href='index.php?current=" . $i . "'>" . $i . "</a> ";
+            echo " <a href='index.php?current=" . $i . "'>d" . $i . "</a> ";
         }
     }
 }
 if ($currentpage != $totalpages) {
-    echo " <a href='index.php?current=" . $currentpage+1 . "'> > </a> ";
+    echo " <a href='index.php?current=" . $currentpage+1 . "'> f> </a> ";
 }
 ?>
 

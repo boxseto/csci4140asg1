@@ -1,8 +1,11 @@
 <?php
 session_start();
 require('vendor/autoload.php');
-$s3 = new Aws\S3\S3Client(['version' => '2006-03-01', 'region' => 'us-east-1',]);
-$bucket = getenv('S3_BUCKET_NAME');
+$s3 = new Aws\S3\S3Client([
+    'version'  => '2006-03-01',
+    'region'   => 'ap-southeast-1',
+]);
+$bucket = getenv('S3_BUCKET');
 
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if(isset($_FILES['image'])){

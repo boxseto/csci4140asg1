@@ -21,7 +21,7 @@ $conn->query($q);
 $q = "Insert into account (username, pass, mode) values (\'admin\', \'minda123\', 1)";
 $sql = $conn->prepare($q);
 $sql->execute();
-$q = "Insert into account (username, pass, mode) values (\'user\', \'csci4140\', 0)";
+$q = "Insert into account (username, pass, mode) values (\'Alice\', \'csci4140\', 0)";
 $sql = $conn->prepare($q);
 $sql->execute();
 
