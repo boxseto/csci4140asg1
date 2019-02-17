@@ -180,14 +180,19 @@ if(isset($_REQUEST['config'])){
             'fileUpload' => $tmp,
             'acl' => AmazonS3::ACL_PUBLIC,
             'contentType' => 'image/' . $_COOKIE['filetype'],
-            ));*/
+            ));
+          $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
+          $filepath = htmlspecialchars($upload->get('ObjectURL'));
+        */    
+        try{
         $s3->putObject(
             S3::inputFile($tmp),
-            BUCKET_NAME, 
+            $bucket, 
             $_COOKIE['filename'], 
             S3::ACL_PUBLIC_READ, 
             array(), 
             array('contentType' => 'image/' . $_COOKIE['filetype']));
+        }catch(Exception $e){echo 'Cannot upload';}
         echo 's3 create object finished';
         //header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
