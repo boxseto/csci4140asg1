@@ -9,12 +9,9 @@ $bucket = getenv('S3_BUCKET');
 echo 'finished geet s3    ';
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['image']['tmp_name'])){
-//if(isset($_FILES['image'])){
-    echo 'has image    ';
     if (mime_content_type($_FILES['image']['tmp_name']) == 'image/png' ||
         mime_content_type($_FILES['image']['tmp_name']) == 'image/jpeg' ||
         mime_content_type($_FILES['image']['tmp_name']) == 'image/gif'){
-        echo 'image mime tyoe ok     :' . mime_content_type($_FILES['image']['tmp_name']);
 
          //insert image
          $db = parse_url(getenv("DATABASE_URL"));
@@ -30,46 +27,40 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
          $sql->execute([rand().rand(), $_SESSION['user'], $access]);
-        echo 'image record insert ok    ';
 
          $file_tmp = $_FILES['image']['tmp_name'];
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
          $expensions = array("jpg", "gif", "png");
-         echo "image properties: extession:$file_ext    ";
          if(in_array($file_ext, $expensions) == true){
-              echo 'image extension ok    ';
              $pid = $conn->lastInsertId();
              $file_name = rand().rand() . '.' . $file_ext;
              $q = "UPDATE image SET name=? WHERE id=?";
              $sql = $conn->prepare($q);
              $sql->execute([$file_name, $pid]);
-             echo 'image record update ok    ';
              try{
                 $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
-               //move_uploaded_file($file_tmp, "img/temp/" . $file_name);
                $filepath = htmlspecialchars($upload->get('ObjectURL'));
-               echo $filepath;
-             }catch(Exception $e){echo $e->getMessage();}
+             }catch(Exception $e){echo 'Cannot upload';}
          }else{
-        setcookie('error', 'file format different.', time()+60*5 , "/");
-             //header('Location: index.php');
+             setcookie('error', 'file format different.', time()+60*5 , "/");
+             header('Location: index.php');
          }
 
          setcookie('effect', 'none', time()+60*60*24*30 , "/");
          setcookie('filename',$file_name, time()+60*60*24*30 , "/");
-         setcookie('filepath',$filepath, time()+60*60*24*30 , "/");
+         setrawcookie('filepath', rawurlencode($filepath), time()+60*60*24*30 , "/"); 
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
          echo '<img src="'.$filepath.'"><br>';
     }else{
         echo 'receieved type: ' . mime_content_type($_FILES['image']['tmp_name']);
         setcookie('error', 'file format different.', time()+60*5 , "/");
-        //header('Location: index.php');
+        header('Location: index.php');
     }
-
-
-}else{echo 'no image    ';}
+}
 if(isset($_REQUEST['effect'])){
-    $imagick = new \Imagick(realpath($_COOKIE['filename']));
+    $imagick = new \Imagick();
+    $image = file_get_contents($_COOKIE['filepath']);
+    $imagick -> readImageBlob($image);
 
     if($_COOKIE['effect'] == 'border'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
