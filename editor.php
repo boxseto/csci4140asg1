@@ -8,7 +8,8 @@ $s3 = new Aws\S3\S3Client([
 $bucket = getenv('S3_BUCKET');
 echo 'finished geet s3    ';
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
-if(isset($_FILES['image'])){
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['image']['tmp_name'])){
+//if(isset($_FILES['image'])){
     echo 'has image    ';
     if (mime_content_type($_FILES['image']) == 'image/png' ||
         mime_content_type($_FILES['image']) == 'image/jpeg' ||
