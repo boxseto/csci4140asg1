@@ -42,6 +42,6 @@ foreach($files as $file){
 */
 
 
-//header('Location: finish.php');
+header('Location: finish.php');
 
 ?>

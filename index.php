@@ -40,8 +40,12 @@ if($arr){
 <!--IMAGE DISPLAY-->
 <h3>Photo Galley</h3>
 <?php
-if(isset($_SESSION['mode'])){
-    $q = 'SELECT COUNT(*) FROM image WHERE temp=0';
+if(isset($_COOKIE['logged'])){
+    if($_COOKIE['logged'] == 'true'){
+        $q = 'SELECT COUNT(*) FROM image WHERE temp=0';
+    }else{
+        $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\'";
+    }
 }else{
     $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\'";
 }
@@ -64,8 +68,16 @@ if (isset($_GET['current']) && is_numeric($_GET['current'])) {
 if ($currentpage > $totalpages) {$currentpage = $totalpages;}
 if ($currentpage < 1) {$currentpage = 1;}
 
+if(isset($_COOKIE['logged'])){
+    if($_COOKIE['logged'] == 'true'){
+        $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . (($currentpage-1)*8) . ", 8";
+    }else{
+        $q = "SELECT name FROM image WHERE temp=0 AND access='public' ORDER BY time DESC LIMIT " . (($currentpage-1)*8) . ", 8";
+    }
+}else{
+    $q = "SELECT name FROM image WHERE temp=0 AND access='public' ORDER BY time DESC LIMIT " . (($currentpage-1)*8) . ", 8";
+}
 
-$q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . ($currentpage-1)*8 . ", 8";
 $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
@@ -74,40 +86,29 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $tempcount += 1;
 }
 
-echo "print page number: totalrow:". (isset($totalrow) ? $totalrow : 0) . "    totalpages: $totalpages     currentpage:$currentpage";
-
-
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> a< </a> ";
 }
-echo "    for loop start    ";
+
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
-    echo "    $i";
     if (($i > 0) && ($i <= $totalpages)) {
-        echo "has to be printed:";
         if ($i == $currentpage) {
-            echo "currentpage";
             echo " [<b>" . $i . "s</b>] ";
         } else {
-            echo "otherpages";
             echo " <a href='index.php?current=" . $i . "'>d" . $i . "</a> ";
         }
     }
-    echo "    ";
 }
-echo "    for loop end    ";
-if ($currentpage != $totalpages) {
-    echo "    print next page    ";
-    //echo " <a href='index.php?current=" . $currentpage+1 . "'> f> </a> ";
+if ($currentpage < $totalpages) {
     echo " <a href='index.php?current=" . ($currentpage+1) . "'> f> </a> ";
 }
 ?>
 
 <!--UPload-->
 <?php
-if($_COOKIE['logged'] != 'true' && isset($_SESSION['mode'])){
-    echo '<!--';
-}
+if(isset($_COOKIE['logged'])){
+    if($_COOKIE['logged'] != 'true'){echo '<!--';}
+}else{echo '<!--';}
 ?>
 <br>
 <h3>Upload photo</h3>
@@ -123,9 +124,9 @@ if($_COOKIE['logged'] != 'true' && isset($_SESSION['mode'])){
 <input type="submit" value="Upload" />
 </form>
 <?php
-if($_COOKIE['logged'] != 'true' && isset($_SESSION['mode']) ){
-    echo '-->';
-}
+if(isset($_COOKIE['logged'])){
+    if($_COOKIE['logged'] != 'true'){echo '-->';}
+}else{echo '-->';}
 ?>
 </body>
 </html>
