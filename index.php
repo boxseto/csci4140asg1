@@ -76,7 +76,7 @@ if ($currentpage < 1) {$currentpage = 1;}
 
 if(isset($_COOKIE['logged'])){
     if($_COOKIE['logged'] == 'true'){
-        $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT " . (($currentpage-1)*8) . ", 8";
+        $q = "SELECT name FROM image WHERE temp=0 ORDER BY time DESC LIMIT 8 OFFSET " . (($currentpage-1)*8);
     }else{
         $q = "SELECT name FROM image WHERE temp=0 AND access='public' ORDER BY time DESC LIMIT 8 OFFSET " . (($currentpage-1)*8);
     }
@@ -97,6 +97,8 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $tempcount += 1;
 }
 
+echo " <br> ";
+//place pagination
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
 }
