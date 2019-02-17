@@ -121,7 +121,7 @@ if(isset($_REQUEST['config'])){
         echo 'process save query';
         $q = "Update image set temp = 0 WHERE name=?";
         $sql = $conn->prepare($q);
-        $sql->execute([$COOKIE['filename']]);
+        $sql->execute([$_COOKIE['filename']]);
       echo 'process save query end';
         //copy effect
         $imagick = new \Imagick();
@@ -170,25 +170,14 @@ if(isset($_REQUEST['config'])){
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
         //write image
-        echo 'recreating temp object: ';
         $tmp = tempnam('/tmp', 'upload_');
-        echo $tmp;
-        echo 'writing image to temp object       ';
         $imagick->writeImage($tmp);
-        echo var_dump($tmp);
-        echo '      s3 create object';
-        /*$result = $s3->create_object($bucket, $_COOKIE['filename'],array(
-            'fileUpload' => $tmp,
-            'acl' => AmazonS3::ACL_PUBLIC,
-            'contentType' => 'image/' . $_COOKIE['filetype'],
-            ));
-        */    
         try{
           $upload = $s3->upload($bucket, $_COOKIE['filename'], fopen($tmp, 'rb'), 'public-read');
-          echo htmlspecialchars($upload->get('ObjectURL'));
+          $filepath = htmlspecialchars($upload->get('ObjectURL'));
+          setrawcookie('filepath', rawurlencode($filepath), time()+60*60*24*30 , "/"); 
         }catch(Exception $e){echo $e->getMessage();}
-        echo 's3 create object finished';
-        //header('Location: final.php');
+        header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
         $q = "DELETE FROM image WHERE name='" . $_COOKIE['filename'] . "'";
         $sql = $conn->prepare($q);
