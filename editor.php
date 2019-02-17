@@ -178,7 +178,7 @@ if(isset($_REQUEST['config'])){
         $tmp = tempnam('/tmp', 'upload_');
         echo $tmp;
         echo 'writing image to temp object';
-        $image->writeImage($tmp);
+        $imagick->writeImage($tmp);
         echo 's3 create object';
         $result = $s3->create_object($bucket, $_COOKIE['filename'],array(
             'fileUpload' => $tmp,
