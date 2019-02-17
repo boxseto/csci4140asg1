@@ -74,21 +74,32 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $tempcount += 1;
 }
 
+echo "print page number: totalrow:". isset($totalrow)?$totalrow:0 . "    totalpages: $totalpages     currentpage:$currentpage";
+
 
 if ($currentpage > 1) {
     echo " <a href='index.php?current=". $currentpage-1 ."'> a< </a> ";
 }
+echo "    for loop start    ";
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
+    echo "    $i";
     if (($i > 0) && ($i <= $totalpages)) {
+        echo "has to be printed:";
         if ($i == $currentpage) {
+            echo "currentpage";
             echo " [<b>" . $i . "s</b>] ";
         } else {
+            echo "otherpages";
             echo " <a href='index.php?current=" . $i . "'>d" . $i . "</a> ";
         }
     }
+    echo "    ";
 }
+echo "    for loop end    ";
 if ($currentpage != $totalpages) {
-    echo " <a href='index.php?current=" . $currentpage+1 . "'> f> </a> ";
+    echo "    print next page    ";
+    //echo " <a href='index.php?current=" . $currentpage+1 . "'> f> </a> ";
+    echo " <a href='index.php?current=" . ($currentpage+1) . "'> f> </a> ";
 }
 ?>
 
