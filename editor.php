@@ -60,9 +60,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
         setcookie('error', 'file format different.', time()+60*5 , "/");
         header('Location: index.php');
     }
-}else{
-    setcookie('error', 'file cannot upload.', time()+60*5 , "/");
-    header('Location: index.php');
 }
 if(isset($_REQUEST['effect'])){
     $imagick = new \Imagick();

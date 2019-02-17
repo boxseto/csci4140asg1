@@ -25,23 +25,30 @@ $q = "Insert into account (username, pass, mode) values ('Alice', 'csci4140', 0)
 $sql = $conn->prepare($q);
 $sql->execute();
 
-/*
-$files = glob('img/upload/*');
-foreach($files as $file){
-  if(is_file($file)){
-    unlink($file);
-  }
+
+//clear bucket
+require('vendor/autoload.php');
+$s3 = new Aws\S3\S3Client([
+    'version'  => '2006-03-01',
+    'region'   => 'ap-southeast-1',
+]);
+$bucket = getenv('S3_BUCKET');
+
+try {
+    $results = $s3->getPaginator('ListObjects', [
+        'Bucket' => $bucket
+    ]);
+
+    foreach ($results as $result) {
+        foreach ($result['Contents'] as $object) {
+            echo $object['Key'] . PHP_EOL;
+        }
+    }
+} catch (S3Exception $e) {
+    echo $e->getMessage() . PHP_EOL;
 }
 
-$files = glob('img/temp/*');
-foreach($files as $file){
-  if(is_file($file)){
-    unlink($file);
-  }
-}
-*/
 
-
-header('Location: finish.php');
+//header('Location: finish.php');
 
 ?>
