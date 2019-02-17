@@ -112,7 +112,7 @@ if(isset($_COOKIE['logged'])){
 ?>
 <br>
 <h3>Upload photo</h3>
-<form method="POST" action="editor.php" ectype="multipart/form-data">
+<form method="POST" action="editor.php" enctype="multipart/form-data">
 <p>Mode:</p>
 <select name="access">
 <option value="public">Public</option>
