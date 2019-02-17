@@ -184,7 +184,7 @@ if(isset($_REQUEST['config'])){
             ));
         */    
         try{
-          $upload = $s3->upload($bucket, $file_name, fopen($tmp, 'rb'), 'public-read');
+          $upload = $s3->upload($bucket, $_COOKIE['filename'], fopen($tmp, 'rb'), 'public-read');
           echo htmlspecialchars($upload->get('ObjectURL'));
         }catch(Exception $e){echo $e->getMessage();}
         echo 's3 create object finished';
