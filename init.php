@@ -1,4 +1,5 @@
 <?php
+session_start();
 $db = parse_url(getenv("DATABASE_URL"));
 $dbpath = ltrim($db["path"], "/");
 $conn = new PDO("pgsql:" . sprintf(
@@ -18,9 +19,11 @@ $conn->query($q);
 $q = "create table account (username varchar(20), pass varchar(20), mode int)";
 $conn->query($q);
 $q = "Insert into account (username, pass, mode) values (\'admin\', \'minda123\', 1)";
-$conn->query($q);
+$sql = $conn->prepare($q);
+$sql->execute();
 $q = "Insert into account (username, pass, mode) values (\'user\', \'csci4140\', 0)";
-$conn->query($q);
+$sql = $conn->prepare($q);
+$sql->execute();
 
 $files = glob('img/upload/*');
 foreach($files as $file){

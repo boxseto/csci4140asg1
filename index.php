@@ -30,13 +30,14 @@ $q = "SELECT mode FROM account WHERE username=?";
 $sql = $conn->prepare($q);
 $sql->execute([$_COOKIE["name"]]);
 $arr = $sql->fetchAll(PDO::FETCH_ASSOC);
-if($arr){
+if($arr && isset($_SESSION['mode'])){
     $row = $arr[0];
     if($row['mode'] == 1){echo '<a href="admin.php">System Initialization</a><br>'; }
 }
 ?>
 
 <!--IMAGE DISPLAY-->
+<h3>Photo Galley</h3>
 <?php
 if(isset($_SESSION['mode'])){
     $q = 'SELECT COUNT(*) FROM image WHERE temp=0';
@@ -49,6 +50,7 @@ $arr = $sql->fetchAll();
 if($arr){
     $row = $arr[0];
     $totalrow = $row[0];
+    if($totalrow == 0){echo '<p>No photo exist.</p><br>';}
 }
 
 $totalpages = ceil(isset($totalrow)?$totalrow:0 / 8);
@@ -91,11 +93,12 @@ if ($currentpage != $totalpages) {
 
 <!--UPload-->
 <?php
-if($_COOKIE['logged'] != 'true'){
+if($_COOKIE['logged'] != 'true' && isset($_SESSION['mode'])){
     echo '<!--';
 }
 ?>
-<h3> Upload photo</h3><br>
+<br>
+<h3>Upload photo</h3>
 <form method="POST" action="editor.php" ectype="multipart/form-data">
 <p>Mode:</p>
 <select name="access">
@@ -108,7 +111,7 @@ if($_COOKIE['logged'] != 'true'){
 <input type="submit" value="Upload" />
 </form>
 <?php
-if($_COOKIE['logged'] != 'true' ){
+if($_COOKIE['logged'] != 'true' && isset($_SESSION['mode']) ){
     echo '-->';
 }
 ?>

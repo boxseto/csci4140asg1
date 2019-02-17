@@ -1,4 +1,5 @@
 <?php
+session_start();
 echo "<p>final image</p><br>";
 echo "<img src='img/upload/". $_COOKIE['filename'] ."'><br>";
 echo "<p>link</p><br>";
