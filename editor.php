@@ -6,7 +6,6 @@ $s3 = new Aws\S3\S3Client([
     'region'   => 'ap-southeast-1',
 ]);
 $bucket = getenv('S3_BUCKET');
-echo 'finished geet s3    ';
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['image']['tmp_name'])){
     if (mime_content_type($_FILES['image']['tmp_name']) == 'image/png' ||
@@ -62,13 +61,13 @@ if(isset($_REQUEST['effect'])){
     $image = file_get_contents($_COOKIE['filepath']);
     $imagick -> readImageBlob($image);
 
-    if($_COOKIE['effect'] == 'border'){
+    if($_REQUEST['effect'] == 'border'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'border', time()+60*60*24*30, "/");
         $imagick->borderImage('black', 10, 10);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
-    }else if($_COOKIE['effect'] == 'lomo'){
+    }else if($_REQUEST['effect'] == 'lomo'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'lomo', time()+60*60*24*30 , "/");
         $imagick->gammaImage(0.5);
@@ -77,7 +76,7 @@ if(isset($_REQUEST['effect'])){
         $imagick->linearStretchImage(0.3*$pixels, 0.2*$pixels);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
-    }else if($_COOKIE['effect'] == 'lf'){
+    }else if($_REQUEST['effect'] == 'lf'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'lf', time()+60*60*24*30 , "/");
         $imagick2 = new \Imagick();
@@ -98,13 +97,13 @@ if(isset($_REQUEST['effect'])){
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
         header("Content-Type: imag/jpg");
         echo $imagick2->getImageBlob();
-    }else if($_COOKIE['effect'] == 'bw'){
+    }else if($_REQUEST['effect'] == 'bw'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'bw', time()+60*60*24*30 , "/");
         $imagick->modulateImage(100, 0, 100);
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
-    }else if($_COOKIE['effect'] == 'blur'){
+    }else if($_REQUEST['effect'] == 'blur'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'blur', time()+60*60*24*30 , "/");
         $imagick->blurImage(100, 2);
