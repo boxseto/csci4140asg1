@@ -88,9 +88,9 @@ if(isset($_REQUEST['effect'])){
         setcookie('effect', 'lf', time()+60*60*24*30 , "/");
         $imagick2 = new \Imagick();
         $imagick2->readImage(realpath("img/protected/flare.png"));
-        $imagick->resizeimage(
-          $imagick2->getImageWidth(),
-          $imagick2->getImageHeight(),
+        $imagick2->resizeimage(
+          $imagick->getImageWidth(),
+          $imagick->getImageHeight(),
           \Imagick::FILTER_LANCZOS,
           1
           );
@@ -102,8 +102,8 @@ if(isset($_REQUEST['effect'])){
           );
         $opacity->rotateimage('black', 90);
  
-        $imagick2->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
-        $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_ATOP, 0, 0);
+        $imagick2->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
+        $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_ATOP, 0, 0, Imagick::CHANNEL_ALPHA);
         /*
         //$imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, \Imagick::CHANNEL_ALL);
