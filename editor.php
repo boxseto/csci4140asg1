@@ -186,7 +186,7 @@ if(isset($_REQUEST['config'])){
         try{
           $upload = $s3->upload($bucket, $file_name, fopen($tmp, 'rb'), 'public-read');
           echo htmlspecialchars($upload->get('ObjectURL'));
-        }catch(Exception $e){echo 'Cannot upload';}
+        }catch(Exception $e){echo $e->getMessage();}
         echo 's3 create object finished';
         //header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
