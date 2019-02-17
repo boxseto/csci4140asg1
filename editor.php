@@ -1,5 +1,9 @@
 <?php
 session_start();
+require('vendor/autoload.php');
+$s3 = new Aws\S3\S3Client(['version' => '2006-03-01', 'region' => 'us-east-1',]);
+$bucket = getenv('S3_BUCKET_NAME');
+
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if(isset($_FILES['image'])){
     if (mime_content_type($_FILES['image']) == 'image/png' ||
@@ -19,27 +23,33 @@ if(isset($_FILES['image'])){
              ));
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
-         $sql->execute([$_FILES['image']['name'], $_SESSION['user'], $access]);
+         $sql->execute([rand().rand().rand(), $_SESSION['user'], $access]);
 
          $file_tmp = $_FILES['image']['tmp_name'];
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
          $expensions = array("jpg", "gif", "png");
          if(in_array($file_ext, $expensions) == true){
              $pid = $conn->lastInsertId();
-             $file_name = $pid . '.' . $file_ext;
+             $file_name = rand().rand() . '.' . $file_ext;
              $q = "UPDATE image SET name=? WHERE id=?";
              $sql = $conn->prepare($q);
-             $sql->execute([$filename, $pid]);
-             move_uploaded_file($file_tmp, "img/temp/" . $file_name);
+             $sql->execute([$file_name, $pid]);
+             try{
+	       $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
+               //move_uploaded_file($file_tmp, "img/temp/" . $file_name);
+               $filepath = htmlspecialchars($upload->get('ObjectURL'));
+               echo $filepath;
+             }catch(Exception $e){echo $e;}
          }else{
              $_SESSION['error'] = 'file format different';
              header('Location: index.php');
          }
 
-         setcookie('filename',$filename, time()+60*60*24*30 , "/");
          setcookie('effect', 'none', time()+60*60*24*30 , "/");
+         setcookie('filename',$file_name, time()+60*60*24*30 , "/");
+         setcookie('filepath',$filepath, time()+60*60*24*30 , "/");
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
-         echo '<img src="img/tmp/'.$filename.'"><br>';
+         echo '<img src="'.$filepath.'"><br>';
     }else{
         $_SESSION['error'] = 'file format different';
         header('Location: index.php');
