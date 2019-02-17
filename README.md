@@ -1,8 +1,8 @@
-#CSCI 4140 assignment 1 -- web instagram
-###Link To Heroku app: [Here](https://csci4140-asg1-seto.herokuapp.com/index.php)
+# CSCI 4140 assignment 1 -- web instagram
+### Link To Heroku app: [Here](https://csci4140-asg1-seto.herokuapp.com/index.php)
 
-##Files Introduction
-*PHP Files
+## Files Introduction
+* PHP Files
   * admin.php
     * Place For admin to confirm system's initialization.
   * editor.php
@@ -21,7 +21,7 @@
     * cointains functions to clear all cookies and session used, for logging out purpose.
   * webprocess.php
     * Process page. Currently it is only for checking log in information.
-*Other Files
+* Other Files
   * composer.json
     * cointains required modules and corresponding module to use in the app.
   * composer.lock
@@ -33,7 +33,7 @@
   * img/protected/flare.png
     * folder storing image used in filter.
 
-##Development Procedure
+## Development Procedure
 1. Create my very brief draft of the program in my own laptop, using apache and mysql
 1. intergrated to heroku app
 1. Found Lots of Errors to fix.
@@ -44,11 +44,11 @@
 1. Cointinue fix bugs...
 1. Modification of minor changes (e.g. parameter of imagick functions, html output formats)
 
-##Parts deserve Bonus
+## Parts deserve Bonus
 * No part is deserved. this assignment is very bad and rubbish code.
 * If one thing deserves bonus, that will be this readme.
 
-##Parts not Fully completed
+## Parts not Fully completed
 * Due to my poor time management, I only finish the very basic requirement.
 * Things like security is not implemented, so guest can actually goes initialization by appending 'init.php' in url
 * it is very slow because of the implementation on imagick
