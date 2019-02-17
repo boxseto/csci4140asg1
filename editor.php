@@ -104,7 +104,8 @@ if(isset($_REQUEST['effect'])){
         $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
         */
-        $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+        //$imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
+        $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
         
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
