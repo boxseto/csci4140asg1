@@ -65,7 +65,6 @@ if(isset($_REQUEST['effect'])){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'border', time()+60*60*24*30, "/");
         $imagick->borderImage('black', 10, 10);
-        header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else if($_REQUEST['effect'] == 'lomo'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
