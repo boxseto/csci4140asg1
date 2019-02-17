@@ -38,6 +38,7 @@ function login_chk(){
     if($counter == 0){
         $_SESSION['error'] = 'INCORRECT PASSWORD OR USERNAME.';
         foreach($_COOKIE as $key => $value){setcookie($key, '', 1);}
+        setcookie('error', 'INCORRECT PASSWORD OR USERNAME.', time()+60*5 , "/");
         header('Location: index.php');
     }
 

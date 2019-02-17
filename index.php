@@ -6,8 +6,8 @@
 <!--ACCESS CONTROL-->
 <?php
 session_start();
-if(isset($_SESSION['error'])) echo $_SESSION['error'];
-$_SESSION['error'] = '';
+if(isset($_COOKIE['error'])) echo $_COOKIE['error'];
+setcookie('error', '', 1);
 
 if(isset($_SESSION['mode'])){
     echo "<p>Hi, " . $_COOKIE["name"] . "!</p><br>";
@@ -44,10 +44,10 @@ if(isset($_COOKIE['logged'])){
     if($_COOKIE['logged'] == 'true'){
         $q = 'SELECT COUNT(*) FROM image WHERE temp=0';
     }else{
-        $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\'";
+        $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access='public'";
     }
 }else{
-    $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access=\'public\'";
+    $q = "SELECT COUNT(*) FROM image WHERE temp=0 AND access='public'";
 }
 $sql = $conn->prepare($q);
 $sql->execute();
@@ -116,7 +116,7 @@ if(isset($_COOKIE['logged'])){
 <p>Mode:</p>
 <select name="access">
 <option value="public">Public</option>
-<option value="private">Public</option>
+<option value="private">Private</option>
 </select>
 <br>
 <input type="file" name="image" required/>

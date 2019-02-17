@@ -6,12 +6,14 @@ $s3 = new Aws\S3\S3Client([
     'region'   => 'ap-southeast-1',
 ]);
 $bucket = getenv('S3_BUCKET');
-
+echo 'finished geet s3    ';
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if(isset($_FILES['image'])){
+    echo 'has image    ';
     if (mime_content_type($_FILES['image']) == 'image/png' ||
         mime_content_type($_FILES['image']) == 'image/jpeg' ||
         mime_content_type($_FILES['image']) == 'image/gif'){
+        echo 'image mime tyoe ok    ';
 
          //insert image
          $db = parse_url(getenv("DATABASE_URL"));
@@ -26,23 +28,27 @@ if(isset($_FILES['image'])){
              ));
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
-         $sql->execute([rand().rand().rand(), $_SESSION['user'], $access]);
+         $sql->execute([rand().rand(), $_SESSION['user'], $access]);
+        echo 'image record insert ok    ';
 
          $file_tmp = $_FILES['image']['tmp_name'];
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
          $expensions = array("jpg", "gif", "png");
+         echo "image properties: extession:$file_ext    ";
          if(in_array($file_ext, $expensions) == true){
+              echo 'image extension ok    ';
              $pid = $conn->lastInsertId();
              $file_name = rand().rand() . '.' . $file_ext;
              $q = "UPDATE image SET name=? WHERE id=?";
              $sql = $conn->prepare($q);
              $sql->execute([$file_name, $pid]);
+             echo 'image record update ok    ';
              try{
-	       $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
+                $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
                //move_uploaded_file($file_tmp, "img/temp/" . $file_name);
                $filepath = htmlspecialchars($upload->get('ObjectURL'));
                echo $filepath;
-             }catch(Exception $e){echo $e;}
+             }catch(Exception $e){echo $e->getMessage();}
          }else{
              $_SESSION['error'] = 'file format different';
              header('Location: index.php');
@@ -59,7 +65,7 @@ if(isset($_FILES['image'])){
     }
 
 
-}
+}else{echo 'no image    ';}
 if(isset($_REQUEST['effect'])){
     $imagick = new \Imagick(realpath($_COOKIE['filename']));
 
