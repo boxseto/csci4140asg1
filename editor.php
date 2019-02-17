@@ -88,14 +88,12 @@ if(isset($_REQUEST['effect'])){
         setcookie('effect', 'lf', time()+60*60*24*30 , "/");
         $imagick2 = new \Imagick();
         $imagick2->readImage(realpath("img/protected/flare.png"));
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
         $imagick2->resizeimage(
           $imagick->getImageWidth(),
           $imagick->getImageHeight(),
           \Imagick::FILTER_LANCZOS,
           1
           );
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
         $opacity = new \Imagick();
         $opacity->newPseudoImage(
           $imagick->getImageHeight(),
@@ -104,8 +102,9 @@ if(isset($_REQUEST['effect'])){
           );
         $opacity->rotateimage('black', 90);
  
-        $imagick2->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
+        //$imagick2->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
+        $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0, Imagick::CHANNEL_ALPHA);
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         $imagick->compositeImage($imagick2, \Imagick::COMPOSITE_ATOP, 0, 0, Imagick::CHANNEL_ALPHA);
         /*
         //$imagick->compositeImage($imagick2, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
