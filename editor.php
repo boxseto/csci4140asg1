@@ -31,6 +31,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
          $expensions = array("jpg", "gif", "png");
          if(in_array($file_ext, $expensions) == true){
+             $mime_ext = strtolower(end(explode('/',mime_content_type($_FILES['image']['tmp_name']))));
+             if( $mime_ext == $file_ext || (($mime_ext == 'jpeg') && ($file_ext == 'jpg')) ){
+               echo 'image is ok';
+             }
              $pid = $conn->lastInsertId();
              $file_name = rand().rand() . '.' . $file_ext;
              $q = "UPDATE image SET name=? WHERE id=?";
@@ -49,6 +53,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          setcookie('filename',$file_name, time()+60*60*24*30 , "/");
          setrawcookie('filepath', rawurlencode($filepath), time()+60*60*24*30 , "/"); 
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
+         setcookie('filetype', $mime_ext, time()+60*60*24*30 , "/");
          echo '<img src="'.$filepath.'"><br>';
     }else{
         echo 'receieved type: ' . mime_content_type($_FILES['image']['tmp_name']);
@@ -65,7 +70,7 @@ if(isset($_REQUEST['effect'])){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'border', time()+60*60*24*30, "/");
         $imagick->borderImage('black', 10, 10);
-        echo $imagick->getImageBlob();
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'lomo'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'lomo', time()+60*60*24*30 , "/");
@@ -73,8 +78,7 @@ if(isset($_REQUEST['effect'])){
         $imagick->modulateImage(100, 70, 100);
         $pixels = $imagick->getImageWidth() * $imagick->getImageHeight();
         $imagick->linearStretchImage(0.3*$pixels, 0.2*$pixels);
-        header("Content-Type: imag/jpg");
-        echo $imagick->getImageBlob();
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'lf'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'lf', time()+60*60*24*30 , "/");
@@ -94,20 +98,17 @@ if(isset($_REQUEST['effect'])){
         $opacity->rotateimage('black', 90);
         $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
-        header("Content-Type: imag/jpg");
-        echo $imagick2->getImageBlob();
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'bw'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'bw', time()+60*60*24*30 , "/");
         $imagick->modulateImage(100, 0, 100);
-        header("Content-Type: imag/jpg");
-        echo $imagick->getImageBlob();
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'blur'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'blur', time()+60*60*24*30 , "/");
         $imagick->blurImage(100, 2);
-        header("Content-Type: imag/jpg");
-        echo $imagick->getImageBlob();
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else{
         setcookie('error', 'I dont know what are you doing.', time()+60*5 , "/");
         //header('Location: index.php');
