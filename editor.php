@@ -33,18 +33,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          if(in_array($file_ext, $expensions) == true){
              $mime_ext = strtolower(end(explode('/',mime_content_type($_FILES['image']['tmp_name']))));
              if( $mime_ext == $file_ext || (($mime_ext == 'jpeg') && ($file_ext == 'jpg')) ){
-               setcookie('error', 'file format different.', time()+60*5 , "/");
-               header('Location: index.php');
+               $pid = $conn->lastInsertId();
+               $file_name = rand().rand() . '.' . $file_ext;
+               $q = "UPDATE image SET name=? WHERE id=?";
+               $sql = $conn->prepare($q);
+               $sql->execute([$file_name, $pid]);
+               try{
+                  $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
+                 $filepath = htmlspecialchars($upload->get('ObjectURL'));
+               }catch(Exception $e){echo 'Cannot upload';}
+             }else{
+                setcookie('error', 'file format different.', time()+60*5 , "/");
+                header('Location: index.php');
              }
-             $pid = $conn->lastInsertId();
-             $file_name = rand().rand() . '.' . $file_ext;
-             $q = "UPDATE image SET name=? WHERE id=?";
-             $sql = $conn->prepare($q);
-             $sql->execute([$file_name, $pid]);
-             try{
-                $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
-               $filepath = htmlspecialchars($upload->get('ObjectURL'));
-             }catch(Exception $e){echo 'Cannot upload';}
          }else{
              setcookie('error', 'file format not accepted.', time()+60*5 , "/");
              header('Location: index.php');
