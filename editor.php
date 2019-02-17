@@ -51,8 +51,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
                echo $filepath;
              }catch(Exception $e){echo $e->getMessage();}
          }else{
-             $_SESSION['error'] = 'file format different';
-             header('Location: index.php');
+        setcookie('error', 'file format different.', time()+60*5 , "/");
+             //header('Location: index.php');
          }
 
          setcookie('effect', 'none', time()+60*60*24*30 , "/");
@@ -61,8 +61,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
          echo '<img src="'.$filepath.'"><br>';
     }else{
-        $_SESSION['error'] = 'file format different';
-        header('Location: index.php');
+        echo 'receieved type: ' . mime_content_type($_FILES['image']);
+        setcookie('error', 'file format different.', time()+60*5 , "/");
+        //header('Location: index.php');
     }
 
 
@@ -119,8 +120,8 @@ if(isset($_REQUEST['effect'])){
         header("Content-Type: imag/jpg");
         echo $imagick->getImageBlob();
     }else{
-        $_SESSION['error'] = 'I dont know what are you doing.';
-        header('Location: index.php');
+        setcookie('error', 'I dont know what are you doing.', time()+60*5 , "/");
+        //header('Location: index.php');
     }
 }
 if(isset($_REQUEST['config'])){
