@@ -232,7 +232,7 @@ if(isset($_REQUEST['config'])){
     '<a href="editor.php?effect=bw">Black White</a><br>'.
     '<a href="editor.php?effect=blur">Blur</a><br>'.
     '<br><br><p>Save changes</p><br>'.
-    '<a href="editor.php?congfig=save">Save</a><br>'.
+    '<a href="editor.php?config=save">Save</a><br>'.
     '<a href="editor.php?config=discard">Discard</a><br>'.
     '<a href="editor.php?config=cancel">Cancel change</a><br>';
 

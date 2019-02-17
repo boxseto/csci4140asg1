@@ -41,7 +41,10 @@ try {
 
     foreach ($results as $result) {
         foreach ($result['Contents'] as $object) {
-            echo $object['Key'] . PHP_EOL;
+          $s3->deleteObject([
+             'Bucket' => $bucket,
+             'Key'    => $object['Key']
+             ]);
         }
     }
 } catch (S3Exception $e) {
@@ -49,6 +52,6 @@ try {
 }
 
 
-//header('Location: finish.php');
+header('Location: finish.php');
 
 ?>
