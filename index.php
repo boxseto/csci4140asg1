@@ -87,6 +87,7 @@ if(isset($_COOKIE['logged'])){
 $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
+/*
 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $imagick = new \Imagick();
   $tmpurl = $s3-> getObjectUrl($bucket, $row['name']);
@@ -94,6 +95,13 @@ while($row = $sql->fetch(PDO::FETCH_ASSOC)){
   $imagick -> readImageBlob($image);
   $imagick->resizeImage(600,400,Imagick::FILTER_POINT,0);
   echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
+  $tempcount += 1;
+}
+*/
+while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+  $imagick = new \Imagick();
+  $tmpurl = $s3-> getObjectUrl($bucket, $row['name']);
+  echo '<img src="'.$tmpurl.'" width="600" height="400" />';
   $tempcount += 1;
 }
 
