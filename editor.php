@@ -161,9 +161,6 @@ if(isset($_REQUEST['config'])){
             setcookie('effect', 'blur', time()+60*60*24*30 , "/");
             $imagick->blurImage(100, 2);
         }
-        
-        echo 'finished image copy effect';
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         //delete origional file in s3
         echo 'deleting object';
         try{
@@ -173,19 +170,25 @@ if(isset($_REQUEST['config'])){
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
         //write image
-        try{
         echo 'recreating temp object: ';
         $tmp = tempnam('/tmp', 'upload_');
         echo $tmp;
         echo 'writing image to temp object';
         $imagick->writeImage($tmp);
         echo 's3 create object';
-        $result = $s3->create_object($bucket, $_COOKIE['filename'],array(
+        /*$result = $s3->create_object($bucket, $_COOKIE['filename'],array(
             'fileUpload' => $tmp,
             'acl' => AmazonS3::ACL_PUBLIC,
             'contentType' => 'image/' . $_COOKIE['filetype'],
-            ));
-        }catch(Exception $e){echo $e->getMessage();}
+            ));*/
+        $s3->putObject(
+            S3::inputFile($tmp),
+            BUCKET_NAME, 
+            $_COOKIE['filename'], 
+            S3::ACL_PUBLIC_READ, 
+            array(), 
+            array('contentType' => 'image/' . $_COOKIE['filetype']));
+        echo 's3 create object finished';
         //header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
         $q = "DELETE FROM image WHERE name='" . $_COOKIE['filename'] . "'";
