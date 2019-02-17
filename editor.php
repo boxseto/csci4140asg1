@@ -60,6 +60,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
         setcookie('error', 'file format different.', time()+60*5 , "/");
         header('Location: index.php');
     }
+}else{
+    setcookie('error', 'file cannot upload.', time()+60*5 , "/");
+    header('Location: index.php');
 }
 if(isset($_REQUEST['effect'])){
     $imagick = new \Imagick();
@@ -100,7 +103,7 @@ if(isset($_REQUEST['effect'])){
         $opacity->rotateimage('black', 90);
         $imagick->compositeImage($opacity, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
         $imagick2->compositeImage($imagick, \Imagick::COMPOSITE_ATOP, 0, 0);
-        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick2->getImageBlob()).'"/>';
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
     }else if($_REQUEST['effect'] == 'bw'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'bw', time()+60*60*24*30 , "/");
@@ -118,6 +121,7 @@ if(isset($_REQUEST['effect'])){
 }
 if(isset($_REQUEST['config'])){
     if($_REQUEST['config'] == 'save'){
+      echo 'process save query';
          $db = parse_url(getenv("DATABASE_URL"));
          $dbpath = ltrim($db["path"], "/");
          $conn = new PDO("pgsql:" . sprintf(
@@ -131,6 +135,7 @@ if(isset($_REQUEST['config'])){
         $q = "Update image set temp = 0 WHERE name='". $COOKIE['filename'] ."'";
         $sql = $conn->prepare($q);
         $sql->execute();
+      echo 'process save query end';
         //copy effect
         $imagick = new \Imagick();
         $image = file_get_contents($_COOKIE['filepath']);
@@ -169,7 +174,11 @@ if(isset($_REQUEST['config'])){
             setcookie('effect', 'blur', time()+60*60*24*30 , "/");
             $imagick->blurImage(100, 2);
         }
+        
+        echo 'finished image copy effect';
+        echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
         //delete origional file in s3
+        echo 'deleting object';
         try{
            $s3->deleteObject([
              'Bucket' => $bucket,
@@ -177,6 +186,7 @@ if(isset($_REQUEST['config'])){
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
         //write image
+        echo 'recreating object object';
         $tmp = tempnam('/tmp', 'upload_');
         $image->writeImage($tmp);
         $result = $s3->create_object($bucket, $_COOKIE['filename'],array(
@@ -196,7 +206,7 @@ if(isset($_REQUEST['config'])){
              $db["pass"],
              $dbpath
              ));
-        $q = "DELETE FROM image WHERE name=\"" . $_COOKIE['filename'] . "\"";
+        $q = "DELETE FROM image WHERE name='" . $_COOKIE['filename'] . "'";
         $sql = $conn->prepare($q);
         $sql->execute();
         //delete file in s3
@@ -206,7 +216,7 @@ if(isset($_REQUEST['config'])){
              'Key'    => $_COOKIE['filename']
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
-        //header('Location: index.php');
+        header('Location: index.php');
     }else if($_REQUEST['config'] == 'cancel'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");
         setcookie('effect', 'none', time()+60*60*24*30 , "/");
