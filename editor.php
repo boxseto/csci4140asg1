@@ -29,7 +29,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
 
          $file_tmp = $_FILES['image']['tmp_name'];
          $file_ext = strtolower(end(explode('.',$_FILES['image']['name'])));
-         $expensions = array("jpg", "gif", "png");
+         $expensions = array("jpg", "gif", "png", "jpeg");
          if(in_array($file_ext, $expensions) == true){
              $mime_ext = strtolower(end(explode('/',mime_content_type($_FILES['image']['tmp_name']))));
              if( $mime_ext == $file_ext || (($mime_ext == 'jpeg') && ($file_ext == 'jpg')) ){
@@ -201,7 +201,7 @@ if(isset($_REQUEST['config'])){
     '<a href="editor.php?effect=bw">Black White</a><br>'.
     '<a href="editor.php?effect=blur">Blur</a><br>'.
     '<br><br><p>Save changes</p><br>'.
-    '<a href="editor.php?config=save">Save</a><br>'.
+    '<a href="editor.php?config=save">Finish</a><br>'.
     '<a href="editor.php?config=discard">Discard</a><br>'.
     '<a href="editor.php?config=cancel">Cancel change</a><br>';
 
