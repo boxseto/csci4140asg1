@@ -84,17 +84,15 @@ if(isset($_COOKIE['logged'])){
     $q = "SELECT name FROM image WHERE temp=0 AND access='public' ORDER BY time DESC LIMIT 8 OFFSET " . (($currentpage-1)*8);
 }
 
-  echo var_dump($q);
 $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-  echo var_dump($row);
   $imagick = new \Imagick();
   $tmpurl = $s3-> getObjectUrl($bucket, $row['name']);
   $image = file_get_contents($tmpurl);
   $imagick -> readImageBlob($image);
-  $imagick->resizeImage(1200,900,Imagick::FILTER_POINT,0);
+  $imagick->resizeImage(600,400,Imagick::FILTER_POINT,0);
   echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
   $tempcount += 1;
 }
