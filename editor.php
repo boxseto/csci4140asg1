@@ -6,6 +6,16 @@ $s3 = new Aws\S3\S3Client([
     'region'   => 'ap-southeast-1',
 ]);
 $bucket = getenv('S3_BUCKET');
+$db = parse_url(getenv("DATABASE_URL"));
+$dbpath = ltrim($db["path"], "/");
+$conn = new PDO("pgsql:" . sprintf(
+"host=%s;port=%s;user=%s;password=%s;dbname=%s",
+    $db["host"],
+    $db["port"],
+    $db["user"],
+    $db["pass"],
+    $dbpath
+    ));
 $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : 'public';
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['image']['tmp_name'])){
     if (mime_content_type($_FILES['image']['tmp_name']) == 'image/png' ||
@@ -13,16 +23,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
         mime_content_type($_FILES['image']['tmp_name']) == 'image/gif'){
 
          //insert image
-         $db = parse_url(getenv("DATABASE_URL"));
-         $dbpath = ltrim($db["path"], "/");
-         $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
-             $db["host"],
-             $db["port"],
-             $db["user"],
-             $db["pass"],
-             $dbpath
-             ));
          $q = "INSERT INTO image (name, creator, access, time) VALUES (?,?,?,now())";
          $sql = $conn->prepare($q);
          $sql->execute([rand().rand(), $_SESSION['user'], $access]);
@@ -118,20 +118,10 @@ if(isset($_REQUEST['effect'])){
 }
 if(isset($_REQUEST['config'])){
     if($_REQUEST['config'] == 'save'){
-      echo 'process save query';
-         $db = parse_url(getenv("DATABASE_URL"));
-         $dbpath = ltrim($db["path"], "/");
-         $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
-             $db["host"],
-             $db["port"],
-             $db["user"],
-             $db["pass"],
-             $dbpath
-             ));
-        $q = "Update image set temp = 0 WHERE name='". $COOKIE['filename'] ."'";
+        echo 'process save query';
+        $q = "Update image set temp = 0 WHERE name=?";
         $sql = $conn->prepare($q);
-        $sql->execute();
+        $sql->execute([$COOKIE['filename']]);
       echo 'process save query end';
         //copy effect
         $imagick = new \Imagick();
@@ -183,26 +173,21 @@ if(isset($_REQUEST['config'])){
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
         //write image
-        echo 'recreating object object';
+        try{
+        echo 'recreating temp object: ';
         $tmp = tempnam('/tmp', 'upload_');
+        echo $tmp;
+        echo 'writing image to temp object';
         $image->writeImage($tmp);
+        echo 's3 create object';
         $result = $s3->create_object($bucket, $_COOKIE['filename'],array(
             'fileUpload' => $tmp,
             'acl' => AmazonS3::ACL_PUBLIC,
             'contentType' => 'image/' . $_COOKIE['filetype'],
             ));
-        header('Location: final.php');
+        }catch(Exception $e){echo $e->getMessage();}
+        //header('Location: final.php');
     }else if($_REQUEST['config'] == 'discard'){
-         $db = parse_url(getenv("DATABASE_URL"));
-         $dbpath = ltrim($db["path"], "/");
-         $conn = new PDO("pgsql:" . sprintf(
-             "host=%s;port=%s;user=%s;password=%s;dbname=%s",
-             $db["host"],
-             $db["port"],
-             $db["user"],
-             $db["pass"],
-             $dbpath
-             ));
         $q = "DELETE FROM image WHERE name='" . $_COOKIE['filename'] . "'";
         $sql = $conn->prepare($q);
         $sql->execute();
