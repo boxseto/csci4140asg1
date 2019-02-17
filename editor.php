@@ -118,11 +118,9 @@ if(isset($_REQUEST['effect'])){
 }
 if(isset($_REQUEST['config'])){
     if($_REQUEST['config'] == 'save'){
-        echo 'process save query';
         $q = "Update image set temp = 0 WHERE name=?";
         $sql = $conn->prepare($q);
         $sql->execute([$_COOKIE['filename']]);
-      echo 'process save query end';
         //copy effect
         $imagick = new \Imagick();
         $image = file_get_contents($_COOKIE['filepath']);
@@ -189,6 +187,11 @@ if(isset($_REQUEST['config'])){
              'Key'    => $_COOKIE['filename']
              ]);
         }catch(Exception $e){echo 'Cannot delete';}
+        setcookie($_COOKIE['filename'], '', 1);
+        setcookie($_COOKIE['effect'], '', 1);
+        setcookie($_COOKIE['filepath'], '', 1);
+        setcookie($_COOKIE['filetype'], '', 1);
+        setcookie($_COOKIE['lasteffect'], '', 1);
         header('Location: index.php');
     }else if($_REQUEST['config'] == 'cancel'){
         setcookie('lasteffect', $_COOKIE['effect'], time()+60*60*24*30 , "/");

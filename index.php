@@ -5,6 +5,12 @@
 <body>
 <!--ACCESS CONTROL-->
 <?php
+require('vendor/autoload.php');
+$s3 = new Aws\S3\S3Client([
+    'version'  => '2006-03-01',
+    'region'   => 'ap-southeast-1',
+]);
+$bucket = getenv('S3_BUCKET');
 session_start();
 if(isset($_COOKIE['error'])) echo $_COOKIE['error'];
 setcookie('error', '', 1);
@@ -82,25 +88,31 @@ $sql = $conn->prepare($q);
 $sql->execute();
 $tempcount = 0;
 while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-  echo "<img src=\"img/upload/" . $row['name'] . "\"><br>";
+  echo var_dump($row);
+  $imagick = new \Imagick();
+  $tmpurl = $s3-> getObjectUrl($bucket, $row['name']);
+  $image = file_get_contents($tmpurl);
+  $imagick -> readImageBlob($image);
+  $imagick->resizeImage(1200,900,Imagick::FILTER_POINT,0);
+  echo '<img src="data:image/' . $_COOKIE['filetype'] . ';base64,'.base64_encode($imagick->getImageBlob()).'"/>';
   $tempcount += 1;
 }
 
 if ($currentpage > 1) {
-    echo " <a href='index.php?current=". $currentpage-1 ."'> a< </a> ";
+    echo " <a href='index.php?current=". $currentpage-1 ."'> < </a> ";
 }
 
 for ($i=($currentpage-3); $i < (($currentpage+3)+1); $i++) {
     if (($i > 0) && ($i <= $totalpages)) {
         if ($i == $currentpage) {
-            echo " [<b>" . $i . "s</b>] ";
+            echo " [<b>" . $i . "</b>] ";
         } else {
-            echo " <a href='index.php?current=" . $i . "'>d" . $i . "</a> ";
+            echo " <a href='index.php?current=" . $i . "'>" . $i . "</a> ";
         }
     }
 }
 if ($currentpage < $totalpages) {
-    echo " <a href='index.php?current=" . ($currentpage+1) . "'> f> </a> ";
+    echo " <a href='index.php?current=" . ($currentpage+1) . "'> > </a> ";
 }
 ?>
 
