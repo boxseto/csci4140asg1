@@ -173,25 +173,19 @@ if(isset($_REQUEST['config'])){
         echo 'recreating temp object: ';
         $tmp = tempnam('/tmp', 'upload_');
         echo $tmp;
-        echo 'writing image to temp object';
+        echo 'writing image to temp object       ';
         $imagick->writeImage($tmp);
-        echo 's3 create object';
+        echo var_dump($tmp);
+        echo '      s3 create object';
         /*$result = $s3->create_object($bucket, $_COOKIE['filename'],array(
             'fileUpload' => $tmp,
             'acl' => AmazonS3::ACL_PUBLIC,
             'contentType' => 'image/' . $_COOKIE['filetype'],
             ));
-          $upload = $s3->upload($bucket, $file_name, fopen($file_tmp, 'rb'), 'public-read');
-          $filepath = htmlspecialchars($upload->get('ObjectURL'));
         */    
         try{
-        $s3->putObject(
-            S3::inputFile($tmp),
-            $bucket, 
-            $_COOKIE['filename'], 
-            S3::ACL_PUBLIC_READ, 
-            array(), 
-            array('contentType' => 'image/' . $_COOKIE['filetype']));
+          $upload = $s3->upload($bucket, $file_name, fopen($tmp, 'rb'), 'public-read');
+          echo htmlspecialchars($upload->get('ObjectURL'));
         }catch(Exception $e){echo 'Cannot upload';}
         echo 's3 create object finished';
         //header('Location: final.php');
