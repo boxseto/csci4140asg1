@@ -11,10 +11,10 @@ $access = isset($_REQUEST['access']) ? htmlspecialchars($_REQUEST['access']) : '
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['image']['tmp_name'])){
 //if(isset($_FILES['image'])){
     echo 'has image    ';
-    if (mime_content_type($_FILES['image']) == 'image/png' ||
-        mime_content_type($_FILES['image']) == 'image/jpeg' ||
-        mime_content_type($_FILES['image']) == 'image/gif'){
-        echo 'image mime tyoe ok    ';
+    if (mime_content_type($_FILES['image']['tmp_name']) == 'image/png' ||
+        mime_content_type($_FILES['image']['tmp_name']) == 'image/jpeg' ||
+        mime_content_type($_FILES['image']['tmp_name']) == 'image/gif'){
+        echo 'image mime tyoe ok     :' . mime_content_type($_FILES['image']['tmp_name']);
 
          //insert image
          $db = parse_url(getenv("DATABASE_URL"));
@@ -61,7 +61,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image']) && $_FILES['i
          setcookie('lasteffect', 'none', time()+60*60*24*30 , "/");
          echo '<img src="'.$filepath.'"><br>';
     }else{
-        echo 'receieved type: ' . mime_content_type($_FILES['image']);
+        echo 'receieved type: ' . mime_content_type($_FILES['image']['tmp_name']);
         setcookie('error', 'file format different.', time()+60*5 , "/");
         //header('Location: index.php');
     }
